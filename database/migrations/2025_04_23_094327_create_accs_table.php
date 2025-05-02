@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('profile_photo')->nullable();
             $table->string('password');
             $table->string('status')->default('active')->nullable(); // active, inactive, banned
-            $table->string('document_type')->nullable();
+            $table->enum('document_type', ['ID', 'passport', 'driver_license', 'residency_permit', 'other'])->nullable(); // Updated to include more document types
             $table->string('document_number')->nullable(); // رقم الوثيقة
             $table->string('document_photo')->nullable(); // صورة الوثيقة الرسمية
             $table->string('nationality')->nullable();    

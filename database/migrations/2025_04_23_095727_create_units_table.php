@@ -13,6 +13,30 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('property_id')->constrained()->cascadeOnDelete(); // العقار الأب
+
+            $table->string('name'); 
+            $table->integer('unit_number')->nullable(); 
+            
+            
+            $table->enum('unit_type', ['apartment','studio', 'office', 'shop', 'warehouse', 'villa','house','building'])->default('apartment'); //'penthouse', 'duplex', 'townhouse', 'loft'
+            
+            $table->decimal('area', 10, 2)->nullable(); 
+            
+            $table->json('unit_details')->nullable(); 
+            // $table->string('unit_details')->nullable(); // تفاصيل الوحدة مثل عدد الغرف، الحمامات، المطبخ، الخزائن، الشرفة، الحديقة، المسبح، الساونا، الجيم، الخ.
+            // $table->integer('floor_number')->nullable(); 
+
+            $table->json('features')->nullable(); 
+
+$table->json('images')->nullable(); // Column to store multiple image paths as JSON
+            
+            $table->enum('status', ['available', 'rented', 'under_maintenance', 'unavailable', 'reserved', 'not_confirmed'])->default('available'); 
+
+            $table->decimal('rental_price', 10, 2)->nullable(); // الإيجار
+
+            $table->text('notes')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

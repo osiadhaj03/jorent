@@ -47,10 +47,12 @@ class Address extends Model
         'street_name' => null,  
     ];
 
-    public function addressable()
+    // relationship with table properties one to one //osaidhaj03
+    public function property()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Property::class);
     }
+    
     
     public function getFullAddressAttribute()
     {

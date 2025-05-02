@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->morphs('addressable'); // ينشئ addressable_id و addressable_type
+            //now we dont use this cloum brcouse the relation is one to  one // $table->morphs('addressable'); // ينشئ addressable_id و addressable_type
             $table->string('country')->nullable(); 
             $table->string('governorate')->nullable(); // المحافظة
             $table->string('city')->nullable(); 
@@ -23,7 +23,11 @@ return new class extends Migration
             $table->string('basin_number')->nullable(); // رقم الحوض
             $table->string('property_number')->nullable(); // رقم المبنى العقاري
             $table->string('street_name')->nullable();
-            
+
+            // Foreign key to properties table
+            $table->unsignedBigInteger('property_id')->nullable(); // Add property_id column
+            $table->foreign('property_id')->references('id')->on('properties')->onDelete('set null'); // Change cascade to set null
+
             $table->timestamps();
         });
     }

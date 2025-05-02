@@ -29,41 +29,49 @@ class AccResource extends Resource
     {
         return $form
             ->schema([
-                //
+            // Personal Information
+            Forms\Components\Fieldset::make('Personal Information')
+                ->schema([
                 Forms\Components\TextInput::make('firstname')
                     ->required()
                     ->label('First Name')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('midname')
-                    //->required()
                     ->label('Middle Name')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('lastname')
-                    //->required()
                     ->label('Last Name')
                     ->maxLength(255),
+                Forms\Components\DatePicker::make('birth_date')
+                    ->label('Birth Date'),
+                Forms\Components\TextInput::make('nationality')
+                    ->label('Nationality')
+                    ->maxLength(255),
+                ]),
+
+            // Contact Information
+            Forms\Components\Fieldset::make('Contact Information')
+                ->schema([
                 Forms\Components\TextInput::make('email')
-                    //->required()
                     ->label('Email')
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
-                    //->required()
                     ->label('Phone')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('address')
-                    //->required()
                     ->label('Address')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('birth_date')
-                    //->required()
-                    ->label('Birth Date'),
-                    Forms\Components\FileUpload::make('profile_photo')
-                    //->required()
+                ]),
+
+            // Profile Information
+            Forms\Components\Fieldset::make('Profile Information')
+                ->schema([
+                Forms\Components\FileUpload::make('profile_photo')
                     ->label('Profile Photo')
                     ->image()
                     ->directory('uploads/images')
-                    ->maxSize(1024), // Optional size limit in KB
+                    ->maxSize(1024),
                 Forms\Components\TextInput::make('password')
                     ->required()
                     ->label('Password')
@@ -71,41 +79,51 @@ class AccResource extends Resource
                     ->maxLength(255)
                     ->dehydrated(fn ($state) => filled($state))
                     ->visible(fn (string $context) => in_array($context, ['create', 'edit'])),
-                    Forms\Components\TextInput::make('status')  
+                Forms\Components\TextInput::make('status')  
                     ->required()
                     ->label('Status')
                     ->maxLength(255)
-                    ->default('active'), // active, inactive, banned
-                Forms\Components\TextInput::make('document_type')
-                    //->required()
+                    ->default('active'),
+                ]),
+
+            // Document Information
+            Forms\Components\Fieldset::make('Document Information')
+                ->schema([
+                Forms\Components\Select::make('document_type')
                     ->label('Document Type')
-                    ->maxLength(255),
+                    ->options([
+                    'passport' => 'Passport',
+                    'id_card' => 'ID Card',
+                    'driver_license' => 'Driver License',
+                    'residency_permit' => 'Residency Permit',
+                    'other' => 'Other',
+                    ])
+                    ->default('passport'),
                 Forms\Components\TextInput::make('document_number')     
-                    //->required()
                     ->label('Document Number')
                     ->maxLength(255),
-                    Forms\Components\FileUpload::make('document_photo')
-                    //->required()
+                Forms\Components\FileUpload::make('document_photo')
                     ->label('Document Photo')
                     ->image()
                     ->directory('uploads/images')
-                    ->maxSize(1024), // Optional size limit in KB
-                Forms\Components\TextInput::make('nationality')
-                    //->required()
-                    ->label('nationality')
-                    ->maxLength(255),
+                    ->maxSize(1024),
+                ]),
+
+            // Employment Information
+            Forms\Components\Fieldset::make('Employment Information')
+                ->schema([
                 Forms\Components\DatePicker::make('hired_date')
-                    //->required()
-                    ->label('Hired Date'),
+                    ->default(now())
+                    ->label('Hired Date')
+                    ->disabled(),
                 Forms\Components\TextInput::make('hired_by')
-                    //->required()
+                    ->default(auth()->user()->name)
                     ->label('Hired By')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled(),
+                ]),
             ]);
-
-
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -114,66 +132,82 @@ class AccResource extends Resource
                 Tables\Columns\TextColumn::make('firstname')
                     ->label('First Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('midname')
                     ->label('Middle Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('lastname')
                     ->label('Last Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Phone')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('address')
                     ->label('Address')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('birth_date')
                     ->label('Birth Date')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->label('Profile Photo')
                     ->circular()
                     ->size(40)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('document_type')
                     ->label('Document Type')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('document_number')
                     ->label('Document Number')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\ImageColumn::make('document_photo')
                     ->label('Document Photo')
                     ->circular()
                     ->size(40)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('nationality')
                   ->label('nationality')
                   ->searchable()
-                  ->sortable(),
+                  ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('hired_date')
                     ->label('Hired Date')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('hired_by')
                     ->label('Hired By')
                     ->searchable()
-                    ->sortable(),  
+                    ->sortable()
+                    ->toggleable(),  
             ])
+
             ->filters([
                 //
                 Tables\Filters\Filter::make('firstname')

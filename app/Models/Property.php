@@ -10,14 +10,21 @@ class Property extends Model
     protected $fillable = [
         'name',
         'description',
-        'type1',
-        'type2',
-        'account_manager_id',
+        'type1', // building, villa, house, warehouse
+        'type2', // residential, commercial, industrial
+        'features',
         'birth_date',
         'floors_count',
         'floor_area',
         'total_area',
-        'features',
+        'acc_id', // foreign key to accs table
+    ];
+    protected $attributes = [
+        'features' => null,
+        'birth_date' => null,
+        'floors_count' => null,
+        'floor_area' => null,
+        'total_area' => null,
     ];
     protected $casts = [
         'features' => 'array',
@@ -25,6 +32,7 @@ class Property extends Model
         'floors_count' => 'integer',
         'floor_area' => 'decimal:2',
         'total_area' => 'decimal:2',
+'images' => 'array', // Cast the images column to an array
     ];
 
 
@@ -41,16 +49,24 @@ class Property extends Model
         $this->attributes['features'] = json_encode($value);
     }
 
+    // relationships with table addresses one to one //osaidhaj03
     public function address()
-{
-    return $this->morphOne(Address::class, 'addressable');
-}
-
-    public function accountManager()
     {
-        return $this->belongsTo(Acc::class, 'account_manager_id');
+        return $this->hasOne(Address::class);
+    }
+    
+
+    // relationship with table acc one to many //osaidhaj03
+    public function acc()
+    {
+        return $this->belongsTo(Acc::class);
     }
 
+
+
+
+
+   //////////////// 
     public function getFullAddressAttribute()
     {
         return $this->address->full_address;
@@ -60,5 +76,5 @@ class Property extends Model
     {
         return $this->address->full_address_with_street;
     }
-
+   /////////////////
 }

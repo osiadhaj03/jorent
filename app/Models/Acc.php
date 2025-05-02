@@ -42,8 +42,11 @@ class Acc extends Model
     ];
     protected $table = 'accs';  
     
-    public function address()
-{
-    return $this->morphOne(Address::class, 'addressable');
-}
+    // relationship with table properties one to many //osaidhaj03
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class);
+    }
+    
 }
