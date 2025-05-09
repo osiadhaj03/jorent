@@ -110,15 +110,15 @@ class TenantResource extends Resource
                     ]),
 
                 // Employment Information
-                Forms\Components\Fieldset::make('Employment Information')
+                Forms\Components\Fieldset::make('Tented by')
                     ->schema([
                         Forms\Components\DatePicker::make('hired_date')
                             ->default(now())
                             ->label('Hired Date')
                             ->disabled(),
                         Forms\Components\TextInput::make('hired_by')
-                            ->default(auth()->user()->name)
-                            ->label('Hired By')
+                            ->default(optional(auth()->user())->name)
+                            ->label('Tented by')
                             ->maxLength(255)
                             ->disabled(),
                     ]),

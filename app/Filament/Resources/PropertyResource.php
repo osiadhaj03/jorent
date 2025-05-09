@@ -236,7 +236,7 @@ Tables\Filters\Filter::make('id')
             ->actions([
                 Tables\Actions\EditAction::make(),
 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\VIEWAction::make()
+                Tables\Actions\ViewAction::make()
 
             ])
                             ->bulkActions([
