@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('street_name')->nullable();
 
             // Foreign key to properties table
-            $table->unsignedBigInteger('property_id')->nullable()->after('id'); // Add property_id column
+            $table->unsignedBigInteger('property_id')->nullable(); // Add property_id column
             $table->foreign('property_id')->references('id')->on('properties')->onDelete('set null'); // Change cascade to set null
 
             $table->timestamps();

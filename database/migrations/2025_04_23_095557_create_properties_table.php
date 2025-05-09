@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('type1', ['building', 'villa', 'house', 'warehouse']); 
             $table->enum('type2', ['Commercial', 'Residential', 'Industrial']); 
             // Foreign key to accounts table one to many 
-            $table->unsignedBigInteger('acc_id')->nullable()->after('id');
+            $table->unsignedBigInteger('acc_id')->nullable();
             $table->foreign('acc_id')->references('id')->on('accs')->onDelete('set null');
             
             $table->string('birth_date')->nullable(); 

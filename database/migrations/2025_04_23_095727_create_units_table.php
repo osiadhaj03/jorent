@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('property_id')->after('id')->constrained()->cascadeOnDelete(); // العقار الأب
+            $table->foreignId('property_id')->constrained()->cascadeOnDelete(); // العقار الأب
 
             $table->string('name'); 
             $table->integer('unit_number')->nullable(); 
