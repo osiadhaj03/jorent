@@ -13,18 +13,27 @@ return new class extends Migration
     {
         Schema::create('tenants', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('firstname');
+            $table->string('midname')->nullable();
+            $table->string('lastname');
             $table->string('email')->unique();
             $table->string('phone');
-            $table->string('id_number')->unique();
-            $table->string('id_type');
+            $table->string('address')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->string('profile_photo')->nullable();
+            $table->string('password');
+            $table->string('status')->default('active');
+            $table->string('document_type')->nullable();
+            $table->string('document_number')->nullable();
+            $table->string('document_photo')->nullable();
+            $table->string('nationality')->nullable();
+            $table->date('hired_date')->nullable();
+            $table->string('hired_by')->nullable();
             $table->string('occupation')->nullable();
             $table->string('employer')->nullable();
             $table->string('employer_phone')->nullable();
-            $table->string('emergency_contact_name');
-            $table->string('emergency_contact_phone');
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('pending');
+            $table->string('emergency_contact_name')->nullable();
+            $table->string('emergency_contact_phone')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -17,8 +17,8 @@ class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationGroup = 'Real Estate';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationGroup = 'Staff Management (Adminstration)';
     protected static ?string $navigationLabel = 'Tenants';
     protected static ?string $label = 'Tenant';
     protected static ?string $pluralLabel = 'Tenants';
@@ -29,74 +29,98 @@ class TenantResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Personal Information')
+                // Personal Information
+                Forms\Components\Fieldset::make('Personal Information')
                     ->schema([
-                        Forms\Components\TextInput::make('first_name')
+                        Forms\Components\TextInput::make('firstname')
                             ->required()
+                            ->label('First Name')
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('last_name')
-                            ->required()
+                        Forms\Components\TextInput::make('midname')
+                            ->label('Middle Name')
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('lastname')
+                            ->label('Last Name')
+                            ->maxLength(255),
+                        Forms\Components\DatePicker::make('birth_date')
+                            ->label('Birth Date'),
+                        Forms\Components\TextInput::make('nationality')
+                            ->label('Nationality')
+                            ->maxLength(255),
+                    ]),
+
+                // Contact Information
+                Forms\Components\Fieldset::make('Contact Information')
+                    ->schema([
                         Forms\Components\TextInput::make('email')
+                            ->label('Email')
                             ->email()
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
-                            ->tel()
-                            ->required()
+                            ->label('Phone')
                             ->maxLength(255),
-                    ])->columns(2),
+                        Forms\Components\TextInput::make('address')
+                            ->label('Address')
+                            ->maxLength(255),
+                    ]),
 
-                Forms\Components\Section::make('Identification')
+                // Profile Information
+                Forms\Components\Fieldset::make('Profile Information')
                     ->schema([
-                        Forms\Components\TextInput::make('id_number')
+                        Forms\Components\FileUpload::make('profile_photo')
+                            ->label('Profile Photo')
+                            ->image()
+                            ->directory('uploads/images')
+                            ->maxSize(1024),
+                        Forms\Components\TextInput::make('password')
                             ->required()
+                            ->label('Password')
+                            ->password()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true),
-                        Forms\Components\Select::make('id_type')
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->visible(fn (string $context) => in_array($context, ['create', 'edit'])),
+                        Forms\Components\TextInput::make('status')  
+                            ->required()
+                            ->label('Status')
+                            ->maxLength(255)
+                            ->default('active'),
+                    ]),
+
+                // Document Information
+                Forms\Components\Fieldset::make('Document Information')
+                    ->schema([
+                        Forms\Components\Select::make('document_type')
+                            ->label('Document Type')
                             ->options([
-                                'national_id' => 'National ID',
                                 'passport' => 'Passport',
-                                'residence_permit' => 'Residence Permit',
+                                'id_card' => 'ID Card',
+                                'driver_license' => 'Driver License',
+                                'residency_permit' => 'Residency Permit',
+                                'other' => 'Other',
                             ])
-                            ->required(),
-                    ])->columns(2),
+                            ->default('passport'),
+                        Forms\Components\TextInput::make('document_number')     
+                            ->label('Document Number')
+                            ->maxLength(255),
+                        Forms\Components\FileUpload::make('document_photo')
+                            ->label('Document Photo')
+                            ->image()
+                            ->directory('uploads/images')
+                            ->maxSize(1024),
+                    ]),
 
-                Forms\Components\Section::make('Employment Information')
+                // Employment Information
+                Forms\Components\Fieldset::make('Employment Information')
                     ->schema([
-                        Forms\Components\TextInput::make('occupation')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('employer')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('employer_phone')
-                            ->tel()
-                            ->maxLength(255),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Emergency Contact')
-                    ->schema([
-                        Forms\Components\TextInput::make('emergency_contact_name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('emergency_contact_phone')
-                            ->tel()
-                            ->required()
-                            ->maxLength(255),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Additional Information')
-                    ->schema([
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'active' => 'Active',
-                                'inactive' => 'Inactive',
-                                'pending' => 'Pending',
-                            ])
-                            ->required(),
-                        Forms\Components\Textarea::make('notes')
-                            ->maxLength(65535)
-                            ->columnSpanFull(),
+                        Forms\Components\DatePicker::make('hired_date')
+                            ->default(now())
+                            ->label('Hired Date')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('hired_by')
+                            ->default(auth()->user()->name)
+                            ->label('Hired By')
+                            ->maxLength(255)
+                            ->disabled(),
                     ]),
             ]);
     }
@@ -105,38 +129,127 @@ class TenantResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('full_name')
-                    ->searchable(['first_name', 'last_name'])
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('firstname')
+                    ->label('First Name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('midname')
+                    ->label('Middle Name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('lastname')
+                    ->label('Last Name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
+                    ->label('Phone')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Address')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('birth_date')
+                    ->label('Birth Date')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\ImageColumn::make('profile_photo')
+                    ->label('Profile Photo')
+                    ->circular()
+                    ->size(40)
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'active' => 'success',
-                        'inactive' => 'danger',
-                        'pending' => 'warning',
-                    }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Status')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('document_type')
+                    ->label('Document Type')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('document_number')
+                    ->label('Document Number')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\ImageColumn::make('document_photo')
+                    ->label('Document Photo')
+                    ->circular()
+                    ->size(40)
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('nationality')
+                    ->label('Nationality')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('hired_date')
+                    ->label('Hired Date')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('hired_by')
+                    ->label('Hired By')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
-                        'pending' => 'Pending',
-                    ]),
+                Tables\Filters\Filter::make('firstname')
+                    ->query(fn (Builder $query): Builder => $query->where('firstname', '!=', ''))
+                    ->label('First Name'),
+                Tables\Filters\Filter::make('midname')
+                    ->query(fn (Builder $query): Builder => $query->where('midname', '!=', ''))
+                    ->label('Middle Name'),
+                Tables\Filters\Filter::make('lastname')
+                    ->query(fn (Builder $query): Builder => $query->where('lastname', '!=', ''))
+                    ->label('Last Name'),
+                Tables\Filters\Filter::make('email')
+                    ->query(fn (Builder $query): Builder => $query->where('email', '!=', ''))
+                    ->label('Email'),
+                Tables\Filters\Filter::make('phone')
+                    ->query(fn (Builder $query): Builder => $query->where('phone', '!=', ''))
+                    ->label('Phone'),
+                Tables\Filters\Filter::make('address')
+                    ->query(fn (Builder $query): Builder => $query->where('address', '!=', ''))
+                    ->label('Address'),
+                Tables\Filters\Filter::make('birth_date')
+                    ->query(fn (Builder $query): Builder => $query->where('birth_date', '!=', ''))
+                    ->label('Birth Date'),
+                Tables\Filters\Filter::make('status')
+                    ->query(fn (Builder $query): Builder => $query->where('status', '!=', ''))
+                    ->label('Status'),
+                Tables\Filters\Filter::make('document_type')
+                    ->query(fn (Builder $query): Builder => $query->where('document_type', '!=', ''))
+                    ->label('Document Type'),
+                Tables\Filters\Filter::make('document_number')
+                    ->query(fn (Builder $query): Builder => $query->where('document_number', '!=', ''))
+                    ->label('Document Number'),
+                Tables\Filters\Filter::make('nationality')
+                    ->query(fn (Builder $query): Builder => $query->where('nationality', '!=', ''))
+                    ->label('Nationality'),
+                Tables\Filters\Filter::make('hired_date')
+                    ->query(fn (Builder $query): Builder => $query->where('hired_date', '!=', ''))
+                    ->label('Hired Date'),
+                Tables\Filters\Filter::make('hired_by')
+                    ->query(fn (Builder $query): Builder => $query->where('hired_by', '!=', ''))
+                    ->label('Hired By'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -162,6 +275,7 @@ class TenantResource extends Resource
         return [
             'index' => Pages\ListTenants::route('/'),
             'create' => Pages\CreateTenant::route('/create'),
+            'view' => Pages\ViewTenant::route('/{record}'),
             'edit' => Pages\EditTenant::route('/{record}/edit'),
         ];
     }

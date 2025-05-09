@@ -9,24 +9,35 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 class Tenant extends Model
 {
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'firstname',
+        'midname',
+        'lastname',
         'email',
         'phone',
-        'id_number',
-        'id_type',
+        'address',
+        'birth_date',
+        'profile_photo',
+        'password',
+        'status',
+        'document_type',
+        'document_number',
+        'document_photo',
+        'nationality',
+        'hired_date',
+        'hired_by',
         'occupation',
         'employer',
         'employer_phone',
         'emergency_contact_name',
         'emergency_contact_phone',
-        'status',
         'notes'
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'birth_date' => 'date',
+        'hired_date' => 'date',
     ];
 
     public function address(): MorphOne
@@ -56,7 +67,7 @@ class Tenant extends Model
 
     public function getFullNameAttribute(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return "{$this->firstname} {$this->midname} {$this->lastname}";
     }
 
     public function getFullAddressAttribute(): string
