@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('custom_invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contract_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignId('contract_id')->nullable()->constrained('contracts')->onDelete('set null');
             $table->string('invoice_number')->unique();
             $table->date('issue_date');
             $table->date('due_date');
             $table->decimal('amount', 10, 2);
             $table->string('status')->default('pending'); // e.g., pending, paid, overdue, cancelled
             $table->date('payment_date')->nullable();
+            $table->text('description');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('custom_invoices');
     }
 };

@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->decimal('rent_amount', 10, 2);
+            $table->string('payment_frequency'); // e.g., monthly, quarterly
+            $table->string('status')->default('pending'); // e.g., active, expired, terminated, pending
+            $table->text('notes')->nullable();
+            $table->string('contract_document')->nullable(); // Path to the uploaded document
             $table->timestamps();
         });
     }
