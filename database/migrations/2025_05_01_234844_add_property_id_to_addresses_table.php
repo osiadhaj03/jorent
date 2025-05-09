@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->unsignedBigInteger('property_id')->nullable(); // Add property_id column
+            $table->unsignedBigInteger('property_id')->nullable()->after('id'); // Add property_id column
             $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade'); // Add foreign key constraint
         });
     }
