@@ -276,6 +276,7 @@ class AccResource extends Resource
         return [
             'index' => Pages\ListAccs::route('/'),
             'create' => Pages\CreateAcc::route('/create'),
+            'view' => Pages\ViewAcc::route('/{record}'),
             'edit' => Pages\EditAcc::route('/{record}/edit'),
         ];
     }
