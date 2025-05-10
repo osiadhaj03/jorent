@@ -61,7 +61,7 @@ class ContractResource extends Resource
                             $unit = Unit::with('property.address')->find($state);
                             if ($unit && $unit->property) {
                                 $property = $unit->property;
-                                $set('property_type', $property->type2);
+                                $set('property_type', $property->type2 ?? '');
 
                                 $locationParts = [];
                                 if ($property->address) {
@@ -70,17 +70,17 @@ class ContractResource extends Resource
                                     if ($property->address->building_number) $locationParts[] = 'مبنى ' . $property->address->building_number;
                                 }
                                 $fullLocation = implode(', ', array_filter($locationParts));
-                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null));
+                                $set('property_location', $fullLocation ?: ($property->custom_location ?? ''));
 
-                                $set('floor_number', $unit->floor_number);
-                                $set('apartment_number', $unit->apartment_number);
-                                $set('land_piece_number', $property->address?->land_piece_number);
-                                $set('basin_number', $property->address?->basin_number);
-                                $set('area_name', $property->address?->area_name);
-                                $set('street_name', $property->address?->street_name);
-                                $set('building_number', $property->address?->building_number);
-                                $set('building_name', $property->building_name);
-                                $set('property_fixtures', $property->fixtures);
+                                $set('floor_number', $unit->floor_number ?? '');
+                                $set('apartment_number', $unit->apartment_number ?? '');
+                                $set('land_piece_number', $property->address?->land_piece_number ?? '');
+                                $set('basin_number', $property->address?->basin_number ?? '');
+                                $set('area_name', $property->address?->area_name ?? '');
+                                $set('street_name', $property->address?->street_name ?? '');
+                                $set('building_number', $property->address?->building_number ?? '');
+                                $set('building_name', $property->building_name ?? '');
+                                $set('property_fixtures', $property->fixtures ?? '');
                             } else {
                                 $set('property_type', 'شقة سكنية');
                                 $set('property_location', null);
