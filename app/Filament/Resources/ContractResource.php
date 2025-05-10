@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Set;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
 
 class ContractResource extends Resource

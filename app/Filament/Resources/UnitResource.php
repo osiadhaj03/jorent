@@ -67,7 +67,7 @@ class UnitResource extends Resource
                             ->numeric()
                             ->required()
                             ->label('Rental Price'),
-                     ])->columns(2),
+                    ])->columns(2),
                 /////////////
                 Forms\Components\Section::make('Unit Details')
                     ->schema([
@@ -75,10 +75,10 @@ class UnitResource extends Resource
                         Forms\Components\Repeater::make('unit_details')
                             ->label('Unit Details')
                             ->schema([
-                                Forms\Components\Select::make('detail_name')
-                                    ->required()
+                                 Forms\Components\Select::make('detail_name')
+->required()
                                     ->label('Detail Name')
-                                    ->options([
+                                                                        ->options([
                                         'Area' => 'Area (sqm)',
                                         
                                         'kitchen' => 'Number of Kitchens',
