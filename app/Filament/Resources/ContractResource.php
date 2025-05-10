@@ -38,7 +38,7 @@ class ContractResource extends Resource
                     ->afterStateUpdated(function (Set $set, ?string $state) {
                         if ($state) {
                             $tenant = Tenant::find($state);
-                            $set('tenant_national_id', $tenant?->national_id);
+                            $set('tenant_national_id', $tenant?->document_number);
                         } else {
                             $set('tenant_national_id', null);
                         }
