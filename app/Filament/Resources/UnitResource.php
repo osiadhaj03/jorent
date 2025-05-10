@@ -183,6 +183,18 @@ class UnitResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Unit Name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('unit_number')
+                    ->label('Unit Number')
+                    ->sortable()
+                    ->searchable(),
                 // Add table columns here
             ])
             ->filters([
