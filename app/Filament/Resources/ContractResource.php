@@ -36,6 +36,7 @@ class ContractResource extends Resource
                     ->required()
                     ->label('المستأجر')
                     ->reactive()
+                    ->default(null) // إضافة قيمة افتراضية
                     ->afterStateUpdated(function (Set $set, ?string $state) {
                         if ($state) {
                             $tenant = Tenant::find($state);
@@ -54,6 +55,7 @@ class ContractResource extends Resource
                     ->required()
                     ->label('الوحدة')
                     ->reactive()
+                    ->default(null) // إضافة قيمة افتراضية
                     ->afterStateUpdated(function (Set $set, ?string $state) {
                         if ($state) {
                             $unit = Unit::with('property.address')->find($state);
