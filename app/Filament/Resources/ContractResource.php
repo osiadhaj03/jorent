@@ -56,16 +56,20 @@ class ContractResource extends Resource
           ->required()
           ->label('الوحدة')
           ->reactive()
-         ->default(null) // إضافة قيمة افتراضية
-         ->afterStateUpdated(function (Set $set, ?string $state) {
-             if ($unit && $unit->property) {
-                // $unit = Unit::find($state);
-                  $property = $unit->property;
-                 $set('property_name', $property->name );
-             } else {
-                 $set('property_name', null);
-             }
-         }),
+          ->default(null) // إضافة قيمة افتراضية
+          ->afterStateUpdated(function (Set $set, ?string $state) {
+              if ($state) {
+                  $unit = Unit::with('property')->find($state);
+                  if ($unit && $unit->property) {
+                      $property = $unit->property;
+                      $set('property_name', $property->name);
+                  } else {
+                      $set('property_name', null);
+                  }
+              } else {
+                  $set('property_name', null);
+              }
+          }),
 
 //                  ->afterStateUpdated(function (Set $set, ?string $state) {
 //                      if ($state) {
