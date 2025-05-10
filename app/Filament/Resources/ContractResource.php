@@ -43,47 +43,42 @@ class ContractResource extends Resource
                             $set('tenant_national_id', null);
                         }
                     }),
-                Forms\Components\TextInput::make('landlord_national_id')
-                    ->required()
-                    ->label('الرقم الوطني للمؤجر')
-                    ->default(fn () => Auth::user()?->national_id) // تأكد من أن نموذج المستخدم لديه حقل 'national_id'
-                    ->disabled(),
+
                 Forms\Components\TextInput::make('tenant_national_id')
                     ->required()
                     ->label('الرقم الوطني للمستأجر')
                     ->disabled(),
-                Forms\Components\Select::make('property_id')
-                    ->relationship('property', 'name') // افترض أن نموذج العقار لديه 'name'. قم بتغييره إذا لزم الأمر.
+                Forms\Components\Select::make('unit_id')
+                    ->relationship('unit', 'unit_number')
                     ->required()
-                    ->label('العقار')
+                    ->label('الوحدة')
                     ->reactive()
                     ->afterStateUpdated(function (Set $set, ?string $state) {
                         if ($state) {
-                            $property = Property::with('address')->find($state);
-                            if ($property) {
-                                $set('property_type', $property->property_type);
+                            $unit = Unit::with('property.address')->find($state);
+                            if ($unit && $unit->property) {
+                                $property = $unit->property;
+                                $set('property_type', $property->type2);
 
                                 $locationParts = [];
                                 if ($property->address) {
                                     if ($property->address->area_name) $locationParts[] = 'منطقة ' . $property->address->area_name;
                                     if ($property->address->street_name) $locationParts[] = 'شارع ' . $property->address->street_name;
                                     if ($property->address->building_number) $locationParts[] = 'مبنى ' . $property->address->building_number;
-                                    // يمكنك إضافة المزيد من تفاصيل العنوان هنا
                                 }
                                 $fullLocation = implode(', ', array_filter($locationParts));
-                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null)); // استخدم حقل موقع مخصص من العقار كاحتياطي
+                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null));
 
-                                $set('floor_number', $property->floor_number);
-                                $set('apartment_number', $property->apartment_number);
+                                $set('floor_number', $unit->floor_number);
+                                $set('apartment_number', $unit->apartment_number);
                                 $set('land_piece_number', $property->address?->land_piece_number);
                                 $set('basin_number', $property->address?->basin_number);
                                 $set('area_name', $property->address?->area_name);
                                 $set('street_name', $property->address?->street_name);
                                 $set('building_number', $property->address?->building_number);
-                                $set('building_name', $property->building_name); // افترض أن اسم المبنى موجود في نموذج العقار مباشرة
-                                $set('property_fixtures', $property->fixtures); // افترض أن نموذج العقار لديه حقل 'fixtures'
+                                $set('building_name', $property->building_name);
+                                $set('property_fixtures', $property->fixtures);
                             } else {
-                                // مسح الحقول إذا لم يتم العثور على العقار
                                 $set('property_type', 'شقة سكنية');
                                 $set('property_location', null);
                                 $set('floor_number', null);
@@ -97,7 +92,6 @@ class ContractResource extends Resource
                                 $set('property_fixtures', null);
                             }
                         } else {
-                            // إعادة تعيين الحقول إلى القيم الافتراضية أو مسحها إذا تم إلغاء تحديد العقار
                             $set('property_type', 'شقة سكنية');
                             $set('property_location', null);
                             $set('floor_number', null);
