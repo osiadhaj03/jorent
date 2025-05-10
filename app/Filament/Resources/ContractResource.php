@@ -44,19 +44,29 @@ class ContractResource extends Resource
                         } else {
                             $set('tenant_national_id', null);
                         }
-                    }),
-//
-//              Forms\Components\TextInput::make('tenant_national_id')
-//                  ->required()
-//                  ->label('الرقم الوطني للمستأجر')
-//                  ->disabled(),
-//              ///////
-//              Forms\Components\Select::make('unit_id')
-//                  ->relationship('unit', 'unit_number')
-//                  ->required()
-//                  ->label('الوحدة')
-//                  ->reactive()
-//                  ->default(null) // إضافة قيمة افتراضية
+                    }),      
+             Forms\Components\TextInput::make('tenant_national_id')
+                 ->required()
+                 ->label('الرقم الوطني للمستأجر')
+                 ->disabled(),
+             ///////
+
+      Forms\Components\Select::make('unit_id')
+          ->relationship('unit', 'unit_number')
+          ->required()
+          ->label('الوحدة')
+          ->reactive()
+         ->default(null) // إضافة قيمة افتراضية
+         ->afterStateUpdated(function (Set $set, ?string $state) {
+             if ($unit && $unit->property) {
+                // $unit = Unit::find($state);
+                  $property = $unit->property;
+                 $set('property_name', $property->name );
+             } else {
+                 $set('property_name', null);
+             }
+         }),
+
 //                  ->afterStateUpdated(function (Set $set, ?string $state) {
 //                      if ($state) {
 //                          $unit = Unit::with('property.address')->find($state);
