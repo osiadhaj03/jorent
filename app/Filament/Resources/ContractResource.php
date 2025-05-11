@@ -29,8 +29,23 @@ class ContractResource extends Resource
     
     public static function form(Form $form): Form
     {
+        return $form
+            ->schema([
+                Forms\Components\Select::make('property_id')
+                    ->label('Property')
+                    ->options(Property::all()->pluck('name', 'id')->toArray())
+                    ->required(),
 
-    //
+                Forms\Components\Select::make('tenant_id')
+                    ->label('Tenant')
+                    ->options(Tenant::all()->pluck('name', 'id')->toArray())
+                    ->required(),
+
+                Forms\Components\Select::make('unit_id')
+                    ->label('Unit')
+                    ->options(Unit::all()->pluck('name', 'id')->toArray())
+                    ->required(),
+            ]);
     }
 
     public static function table(Table $table): Table
