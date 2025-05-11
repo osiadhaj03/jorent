@@ -68,12 +68,21 @@ class Property extends Model
     {
         return $this->hasMany(Unit::class);
     }
-
+    // relationship with table contracts one to many //osaidhaj03
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class);
+    }
     // relationship with table tenants one to many //osaidhaj03
     public function tenants()
     {
         return $this->hasMany(Tenant::class);
     }   
+    // relationship with table payments one to many //osaidhaj03
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 
 
 

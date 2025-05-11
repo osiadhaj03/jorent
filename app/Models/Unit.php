@@ -30,8 +30,4 @@ class Unit extends Model
     {
         return $this->belongsTo(Property::class);
     }
-    public function contracts()
-    {
-        return $this->hasMany(Contract::class);
-    }
 }

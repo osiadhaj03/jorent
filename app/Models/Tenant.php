@@ -40,8 +40,11 @@ class Tenant extends Model
         'hired_date' => 'date',
     ];
 
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
 
-//
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);

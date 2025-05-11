@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Set;
 use App\Models\Property;
 use App\Models\Tenant;
-use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
 
 class ContractResource extends Resource
@@ -31,68 +30,183 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
-                //
                 Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'name')
+                    ->relationship('tenant', 'firstname') // يمكنك تغيير 'firstname' إلى 'full_name' إذا كان ذلك مناسبًا
                     ->required()
-                    ->label('Tenant Name'),
-                Forms\Components\Select::make('unit_id')
-                    ->relationship('unit', 'name')
-                    ->required()
-                    ->label('Unit Name'),
-                Forms\Components\TextInput::make('landlord_name')
-                    ->required()
-                    ->label('Landlord Name'),
-                Forms\Components\TextInput::make('contract_number')
-                    ->required()
-                    ->label('Contract Number')
-                    ->unique(ignoringRecord: true)
-                    ->default(function (Set $set) {
-                        return Contract::max('contract_number') + 1;
+                    ->label('المستأجر')
+                    ->reactive()
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        if ($state) {
+                            $tenant = Tenant::find($state);
+                            $set('tenant_national_id', $tenant?->document_number);
+                        } else {
+                            $set('tenant_national_id', null);
+                        }
                     }),
+                Forms\Components\TextInput::make('landlord_national_id')
+                    ->required()
+                    ->label('الرقم الوطني للمؤجر')
+                    ->default(fn () => Auth::user()?->national_id) // تأكد من أن نموذج المستخدم لديه حقل 'national_id'
+                    ->disabled(),
+                Forms\Components\TextInput::make('tenant_national_id')
+                    ->required()
+                    ->label('الرقم الوطني للمستأجر')
+                    ->disabled(),
+                Forms\Components\Select::make('property_id')
+                    ->relationship('property', 'name') // افترض أن نموذج العقار لديه 'name'. قم بتغييره إذا لزم الأمر.
+                    ->required()
+                    ->label('العقار')
+                    ->reactive()
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        if ($state) {
+                            $property = Property::with('address')->find($state);
+                            if ($property) {
+                                $set('property_type', $property->property_type);
+
+                                $locationParts = [];
+                                if ($property->address) {
+                                    if ($property->address->area_name) $locationParts[] = 'منطقة ' . $property->address->area_name;
+                                    if ($property->address->street_name) $locationParts[] = 'شارع ' . $property->address->street_name;
+                                    if ($property->address->building_number) $locationParts[] = 'مبنى ' . $property->address->building_number;
+                                    // يمكنك إضافة المزيد من تفاصيل العنوان هنا
+                                }
+                                $fullLocation = implode(', ', array_filter($locationParts));
+                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null)); // استخدم حقل موقع مخصص من العقار كاحتياطي
+
+                                $set('floor_number', $property->floor_number);
+                                $set('apartment_number', $property->apartment_number);
+                                $set('land_piece_number', $property->address?->land_piece_number);
+                                $set('basin_number', $property->address?->basin_number);
+                                $set('area_name', $property->address?->area_name);
+                                $set('street_name', $property->address?->street_name);
+                                $set('building_number', $property->address?->building_number);
+                                $set('building_name', $property->building_name); // افترض أن اسم المبنى موجود في نموذج العقار مباشرة
+                                $set('property_fixtures', $property->fixtures); // افترض أن نموذج العقار لديه حقل 'fixtures'
+                            } else {
+                                // مسح الحقول إذا لم يتم العثور على العقار
+                                $set('property_type', 'شقة سكنية');
+                                $set('property_location', null);
+                                $set('floor_number', null);
+                                $set('apartment_number', null);
+                                $set('land_piece_number', null);
+                                $set('basin_number', null);
+                                $set('area_name', null);
+                                $set('street_name', null);
+                                $set('building_number', null);
+                                $set('building_name', null);
+                                $set('property_fixtures', null);
+                            }
+                        } else {
+                            // إعادة تعيين الحقول إلى القيم الافتراضية أو مسحها إذا تم إلغاء تحديد العقار
+                            $set('property_type', 'شقة سكنية');
+                            $set('property_location', null);
+                            $set('floor_number', null);
+                            $set('apartment_number', null);
+                            $set('land_piece_number', null);
+                            $set('basin_number', null);
+                            $set('area_name', null);
+                            $set('street_name', null);
+                            $set('building_number', null);
+                            $set('building_name', null);
+                            $set('property_fixtures', null);
+                        }
+                    }),
+                Forms\Components\TextInput::make('property_type')
+                    ->default('شقة سكنية')
+                    ->required()
+                    ->label('نوع العقار')
+                    ->disabled(),
+                Forms\Components\TextInput::make('property_location')
+                    ->required()
+                    ->label('موقع العقار')
+                    ->disabled(),
+                Forms\Components\TextInput::make('floor_number')
+                    ->required()
+                    ->label('رقم الطابق')
+                    ->disabled(),
+                Forms\Components\TextInput::make('apartment_number')
+                    ->required()
+                    ->label('رقم الشقة')
+                    ->disabled(),
+                Forms\Components\TextInput::make('land_piece_number')
+                    ->required()
+                    ->label('رقم قطعة الأرض')
+                    ->disabled(),
+                Forms\Components\TextInput::make('basin_number')
+                    ->required()
+                    ->label('رقم الحوض')
+                    ->disabled(),
+                Forms\Components\TextInput::make('area_name')
+                    ->required()
+                    ->label('اسم المنطقة')
+                    ->disabled(),
+                Forms\Components\TextInput::make('street_name')
+                    ->required()
+                    ->label('اسم الشارع')
+                    ->disabled(),
+                Forms\Components\TextInput::make('building_number')
+                    ->required()
+                    ->label('رقم البناء')
+                    ->disabled(),
+                Forms\Components\TextInput::make('building_name')
+                    ->required()
+                    ->label('اسم البناء')
+                    ->disabled(),
+                Forms\Components\TextInput::make('usage_type')
+                    ->default('للسكن فقط')
+                    ->required()
+                    ->label('نوع الاستخدام'),
+                Forms\Components\TextInput::make('property_boundaries')
+                    ->default('داخل جدران الشقة فقط')
+                    ->required()
+                    ->label('حدود العقار'),
                 Forms\Components\DatePicker::make('start_date')
                     ->required()
-                    ->label('Start Date'),
+                    ->label('تاريخ بداية العقد'),
                 Forms\Components\DatePicker::make('end_date')
                     ->required()
-                    ->label('End Date'),
-                Forms\Components\TextInput::make('rent_amount')
+                    ->label('تاريخ نهاية العقد'),
+                Forms\Components\TextInput::make('contract_period')
                     ->required()
-                    ->label('Rent Amount')
+                    ->label('مدة العقد'),
+                Forms\Components\TextInput::make('annual_rent')
                     ->numeric()
-                    ->minValue(0)
-                    ->maxValue(1000000),
+                    ->required()
+                    ->label('قيمة الإيجار السنوي'),
                 Forms\Components\Select::make('payment_frequency')
                     ->options([
-                        'daily' => 'Daily',
-                        'weekly' => 'Weekly',
-                        'monthly' => 'Monthly',
-                        'yearly' => 'Yearly',
+                        'monthly' => 'شهري',
+                        'quarterly' => 'ربع سنوي',
+                        'semi_annual' => 'نصف سنوي',
+                        'annual' => 'سنوي'
                     ])
                     ->required()
-                    ->label('Payment Frequency'),
-                Forms\Components\Textarea::make('terms_and_conditions_extra')
-                    ->label('Terms and Conditions')
-                    ->rows(3)
-                    ->maxLength(500),
-                Forms\Components\TextInput::make('status')
+                    ->label('تكرار الدفع'),
+                Forms\Components\TextInput::make('payment_amount')
+                    ->numeric()
+                    ->required()
+                    ->label('قيمة الدفعة'),
+                Forms\Components\Toggle::make('education_tax')
+                    ->default(true)
+                    ->label('ضريبة المعارف'),
+                Forms\Components\TextInput::make('education_tax_amount')
+                    ->numeric()
+                    ->label('قيمة ضريبة المعارف'),
+                Forms\Components\Textarea::make('property_fixtures')
+                    ->required()
+                    ->label('محتويات العقار')
+                    ->disabled(),
+                Forms\Components\Textarea::make('additional_terms')
+                    ->label('شروط إضافية'),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'active' => 'فعال',
+                        'expired' => 'منتهي',
+                        'terminated' => 'ملغي'
+                    ])
                     ->default('active')
-                    ->label('Status')
-                    ->required(),
-
-            
-            Forms\Components\Fieldset::make('Employment Information')
-                ->schema([
-                Forms\Components\DatePicker::make('hired_date')
-                    ->default(now())
-                    ->label('Hired Date')
-                    ->disabled(),
-                Forms\Components\TextInput::make('hired_by')
-                    ->default(auth()->user()->name)
-                    ->label('Hired By')
-                    ->maxLength(255)
-                    ->disabled(),
-                ]),
+                    ->required()
+                    ->label('حالة العقد')
             ]);
     }
 
@@ -100,7 +214,56 @@ class ContractResource extends Resource
     {
         return $table
             ->columns([
-
+                Tables\Columns\TextColumn::make('tenant.full_name')
+                    ->sortable()
+                    ->searchable()
+                    ->label('المستأجر'),
+                Tables\Columns\TextColumn::make('property_location')
+                    ->searchable()
+                    ->label('موقع العقار'),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->date()
+                    ->sortable()
+                    ->label('تاريخ البداية'),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->date()
+                    ->sortable()
+                    ->label('تاريخ النهاية'),
+                Tables\Columns\TextColumn::make('annual_rent')
+                    ->money('jod')
+                    ->sortable()
+                    ->label('الإيجار السنوي'),
+                Tables\Columns\TextColumn::make('payment_frequency')
+                    ->label('تكرار الدفع')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'monthly' => 'شهري',
+                        'quarterly' => 'ربع سنوي',
+                        'semi_annual' => 'نصف سنوي',
+                        'annual' => 'سنوي',
+                    }),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'expired' => 'danger',
+                        'terminated' => 'warning',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'active' => 'فعال',
+                        'expired' => 'منتهي',
+                        'terminated' => 'ملغي',
+                    })
+                    ->label('الحالة'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('تاريخ الإنشاء'),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('تاريخ التحديث'),
             ])
             ->filters([
                 //
