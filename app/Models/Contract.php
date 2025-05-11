@@ -44,15 +44,22 @@ class Contract extends Model
         'education_tax_amount' => 'decimal:2'
     ];
 
+    public function Acc()
+    {
+        return $this->belongsTo(Acc::class);
+    }
+    
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
 
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
+
 
     public function unit()
     {

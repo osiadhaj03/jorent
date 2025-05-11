@@ -13,15 +13,26 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            // إضافة حقل رقم العقد بحيث يكون فريد ويبدأ من 1 إلى ما لانهاية
+            $table->string('contract_number')->unique()->default(DB::raw('(SELECT COALESCE(MAX(contract_number) + 1, 1) FROM contracts)'));
+            // اسم المؤجر يضاف يدوي حاليا 
+            $table->string('landlord_name');
+            // ربط مع جدول المستاجرين بحيث كل مستاجر له عديد من العقود وكل عقد له مستاجر واحد ونفس الكلام عن الوحدة
+            $table->foreignId('tenant_id')->constrained()->nullOnDelete();
+            $table->foreignId('unit_id')->constrained()->nullOnDelete();// بالنسبة للعنوان رح يتم احضاره من جدول الوحدات ثم جدول العقار 
+            //
             $table->date('start_date');
-            $table->date('end_date');
-            $table->decimal('rent_amount', 10, 2);
-            $table->string('payment_frequency'); // e.g., monthly, quarterly
-            $table->string('status')->default('pending'); // e.g., active, expired, terminated, pending
-            $table->text('notes')->nullable();
-            $table->string('contract_document')->nullable(); // Path to the uploaded document
+            $table->date('end_date'); // هاي في العقد بنحطها بدل مدة الإيجار (حتى 5-5-2025)
+            $table->decimal('rent_amount', 10, 2); // هاي بدل الايجار 
+
+            $table->enum('payment_frequency', ['daily', 'weekly', 'monthly', 'yearly']); // تحديد خيارات الدفع
+            $table->text('terms_and_conditions_extra')->nullable(); // هاي بدل الشروط والأحكام الإضافية
+
+            $table->enum('status', ['active', 'inactive'])->default('active'); // هاي بدل حالة العقد (نشط أو غير نشط)
+            // هاي بدل تاريخ الإنشاء وتاريخ التعديل
+
+            $table->date('hired_date')->nullable();
+            $table->string('hired_by')->nullable();
             $table->timestamps();
         });
     }

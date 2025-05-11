@@ -31,20 +31,68 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('property_id')
-                    ->label('Property')
-                    ->options(Property::all()->pluck('name', 'id')->toArray())
-                    ->required(),
-
+                //
                 Forms\Components\Select::make('tenant_id')
-                    ->label('Tenant')
-                    ->options(Tenant::all()->pluck('name', 'id')->toArray())
+                    ->relationship('tenant', 'name')
+                    ->required()
+                    ->label('Tenant Name'),
+                Forms\Components\Select::make('unit_id')
+                    ->relationship('unit', 'name')
+                    ->required()
+                    ->label('Unit Name'),
+                Forms\Components\TextInput::make('landlord_name')
+                    ->required()
+                    ->label('Landlord Name'),
+                Forms\Components\TextInput::make('contract_number')
+                    ->required()
+                    ->label('Contract Number')
+                    ->unique(ignoringRecord: true)
+                    ->default(function (Set $set) {
+                        return Contract::max('contract_number') + 1;
+                    }),
+                Forms\Components\DatePicker::make('start_date')
+                    ->required()
+                    ->label('Start Date'),
+                Forms\Components\DatePicker::make('end_date')
+                    ->required()
+                    ->label('End Date'),
+                Forms\Components\TextInput::make('rent_amount')
+                    ->required()
+                    ->label('Rent Amount')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(1000000),
+                Forms\Components\Select::make('payment_frequency')
+                    ->options([
+                        'daily' => 'Daily',
+                        'weekly' => 'Weekly',
+                        'monthly' => 'Monthly',
+                        'yearly' => 'Yearly',
+                    ])
+                    ->required()
+                    ->label('Payment Frequency'),
+                Forms\Components\Textarea::make('terms_and_conditions_extra')
+                    ->label('Terms and Conditions')
+                    ->rows(3)
+                    ->maxLength(500),
+                Forms\Components\TextInput::make('status')
+                    ->default('active')
+                    ->label('Status')
                     ->required(),
 
-                Forms\Components\Select::make('unit_id')
-                    ->label('Unit')
-                    ->options(Unit::all()->pluck('name', 'id')->toArray())
-                    ->required(),
+            
+            Forms\Components\Fieldset::make('Employment Information')
+                ->schema([
+                Forms\Components\DatePicker::make('hired_date')
+                    ->default(now())
+                    ->label('Hired Date')
+                    ->disabled(),
+                Forms\Components\TextInput::make('hired_by')
+                    ->default(auth()->user()->name)
+                    ->label('Hired By')
+                    ->maxLength(255)
+                    ->disabled(),
+                ]),
             ]);
     }
 

@@ -41,7 +41,7 @@ class Tenant extends Model
     ];
 
 
-
+//
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);
