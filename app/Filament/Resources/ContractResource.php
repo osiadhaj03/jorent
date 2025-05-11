@@ -31,20 +31,7 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'firstname') // يمكنك تغيير 'firstname' إلى 'full_name' إذا كان ذلك مناسبًا
-                    ->required()
-                    ->label('المستأجر')
-                    ->reactive()
-                    ->default(null) // إضافة قيمة افتراضية
-                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                        if ($state) {
-                            $tenant = Tenant::find($state);
-                            $set('tenant_national_id', $tenant?->document_number);
-                        } else {
-                            $set('tenant_national_id', null);
-                        }
-                    }),      
+
              Forms\Components\TextInput::make('tenant_national_id')
                  ->required()
                  ->label('الرقم الوطني للمستأجر')
