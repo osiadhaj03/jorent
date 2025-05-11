@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
             // إضافة حقل رقم العقد بحيث يكون فريد ويبدأ من 1 إلى ما لانهاية
-            $table->string('contract_number')->unique()->default(DB::raw('(SELECT COALESCE(MAX(contract_number) + 1, 1) FROM contracts)'));
+            //$table->string('contract_number')->unique()->default(DB::raw('(SELECT COALESCE(MAX(contract_number) + 1, 1) FROM contracts)'));
             // اسم المؤجر يضاف يدوي حاليا 
             $table->string('landlord_name');
             // ربط مع جدول المستاجرين بحيث كل مستاجر له عديد من العقود وكل عقد له مستاجر واحد ونفس الكلام عن الوحدة
@@ -29,10 +29,11 @@ return new class extends Migration
             $table->text('terms_and_conditions_extra')->nullable(); // هاي بدل الشروط والأحكام الإضافية
 
             $table->enum('status', ['active', 'inactive'])->default('active'); // هاي بدل حالة العقد (نشط أو غير نشط)
+            
             // هاي بدل تاريخ الإنشاء وتاريخ التعديل
-
             $table->date('hired_date')->nullable();
             $table->string('hired_by')->nullable();
+            
             $table->timestamps();
         });
     }
