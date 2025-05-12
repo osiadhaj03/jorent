@@ -107,31 +107,49 @@ class PropertyResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('address.country')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.country', $state)),
                         Forms\Components\TextInput::make('address.governorate')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.governorate', $state)),
                         Forms\Components\TextInput::make('address.city')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.city', $state)),
                         Forms\Components\TextInput::make('address.district')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.district', $state)),
                         Forms\Components\TextInput::make('address.building_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.building_number', $state)),
                         Forms\Components\TextInput::make('address.plot_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.plot_number', $state)),
                         Forms\Components\TextInput::make('address.basin_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.basin_number', $state)),
                         Forms\Components\TextInput::make('address.property_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.property_number', $state)),
                         Forms\Components\TextInput::make('address.street_name')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('address_data.street_name', $state)),
                     ]),
             ]);
 
