@@ -35,7 +35,7 @@ class ContractResource extends Resource
                     ->required()
                     ->label('Landlord Name'),
                 Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'name')
+                    ->relationship('tenant', 'firstname')
                     ->required()
                     ->label('Tenant Name'),
                 Forms\Components\Select::make('unit_id')
