@@ -32,6 +32,28 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
+                // Signatures Section at the top
+                Forms\Components\Section::make('التوقيعات')
+                    ->schema([
+                        SignaturePad::make('tenant_signature')
+                            ->label('توقيع المستأجر')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        SignaturePad::make('witness_signature')
+                            ->label('توقيع الشاهد')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        SignaturePad::make('landlord_signature')
+                            ->label('توقيع المؤجر')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+                    ])->columns(3),
+
                 Forms\Components\TextInput::make('landlord_name')
                     ->required()
                     ->label('Landlord Name'),
@@ -80,27 +102,6 @@ class ContractResource extends Resource
                     })
                     ->required()
                     ->label('Unit Name'),
-
-                Forms\Components\Section::make('Signatures')
-                    ->schema([
-                        SignaturePad::make('tenant_signature')
-                            ->label('Tenant Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-
-                        SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-
-                        SignaturePad::make('landlord_signature')
-                            ->label('Landlord Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-                    ])->columns(3),
 
                 ///////////    
                 Forms\Components\TextInput::make('governorate')
