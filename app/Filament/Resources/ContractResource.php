@@ -135,24 +135,18 @@ class ContractResource extends Resource
                     ->schema([
                         SignaturePad::make('tenant_signature')
                             ->label('Tenant Signature')
-                            ->modalHeading('Add Tenant Signature')
-                            ->modalButton('Click to Sign')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
                             ->required(),
 
                         SignaturePad::make('witness_signature')
                             ->label('Witness Signature')
-                            ->modalHeading('Add Witness Signature')
-                            ->modalButton('Click to Sign')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
                             ->required(),
 
                         SignaturePad::make('landlord_signature')
                             ->label('Landlord Signature')
-                            ->modalHeading('Add Landlord Signature')
-                            ->modalButton('Click to Sign')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
                             ->required(),
