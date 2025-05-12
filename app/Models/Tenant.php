@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Tenant extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'firstname',
         'midname',
@@ -40,8 +43,11 @@ class Tenant extends Model
         'hired_date' => 'date',
     ];
 
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
 
-//
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);

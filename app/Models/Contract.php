@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Contract extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'tenant_id',
         'property_id',
+        'unit_id',
         'landlord_national_id',
         'tenant_national_id',
         'property_type',
@@ -31,7 +35,6 @@ class Contract extends Model
         'payment_amount',
         'education_tax',
         'education_tax_amount',
-        'property_fixtures',
         'additional_terms',
         'status'
     ];
@@ -44,22 +47,20 @@ class Contract extends Model
         'education_tax_amount' => 'decimal:2'
     ];
 
-    public function Acc()
-    {
-        return $this->belongsTo(Acc::class);
-    }
-    
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
-
 
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
 
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
 
     public function unit()
     {
