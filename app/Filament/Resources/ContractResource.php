@@ -129,58 +129,7 @@ class ContractResource extends Resource
                 Forms\Components\Textarea::make('terms_and_conditions_extra')
                     ->nullable(),
 
-                // Signatures Section
-                Forms\Components\Section::make('Contract Signatures')
-                    ->description('Click on each signature field to open the signature pad')
-                    ->schema([
-                        SignaturePad::make('tenant_signature')
-                            ->label('Tenant Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('rgba(0,0,0,0)')  // Background color on dark mode
-                            ->exportBackgroundColor('rgba(0,0,0,0)')  // Background color on export
-                            ->penColor('#000')  // Pen color on light mode
-                            ->penColorOnDark('#000')  // Pen color on dark mode
-                            ->exportPenColor('#000')
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required()
-                            ->modalSize('xl')  // This makes the signature pad larger when clicked
-                            ->modalHeading('Tenant Signature'),
-
-                        SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')
-                            ->backgroundColorOnDark('rgba(0,0,0,0)')
-                            ->exportBackgroundColor('rgba(0,0,0,0)')
-                            ->penColor('#000')
-                            ->penColorOnDark('#000')
-                            ->exportPenColor('#000')
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required()
-                            ->modalSize('xl')
-                            ->modalHeading('Witness Signature'),
-                        SignaturePad::make('landlord_signature')
-                            ->backgroundColor('rgba(0,0,0,0)')
-                            ->backgroundColorOnDark('rgba(0,0,0,0)')
-                            ->exportBackgroundColor('rgba(0,0,0,0)')
-                            ->penColor('#000')
-                            ->penColorOnDark('#000')
-                            ->exportPenColor('#000')
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required()
-                            ->modalSize('xl')
-                            ->modalHeading('Landlord Signature'),
-                    ])->columns(3),
-
-                // يا غالي هاي الحالة فعال ومش فعال اذا كانت بين التاريخين البداية والنهاية بكون فعال غير هيك بكون غير فعال    
+                // Contract Status
                 Forms\Components\Select::make('status')
                     ->options([
                         'active' => 'Active',
@@ -202,7 +151,53 @@ class ContractResource extends Resource
                         }
                     }),
 
-/////////////////////////////////////////////
+                // Signatures Section
+                Forms\Components\Section::make('Contract Signatures')
+                    ->description('Click on each signature field to open the signature pad')
+                    ->schema([
+                        SignaturePad::make('tenant_signature')
+                            ->label('Tenant Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')
+                            ->exportBackgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->penColorOnDark('#000')
+                            ->exportPenColor('#000')
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
+                            ->required(),
+
+                        SignaturePad::make('witness_signature')
+                            ->label('Witness Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')
+                            ->exportBackgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->penColorOnDark('#000')
+                            ->exportPenColor('#000')
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
+                            ->required(),
+
+                        SignaturePad::make('landlord_signature')
+                            ->label('Landlord Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')
+                            ->exportBackgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->penColorOnDark('#000')
+                            ->exportPenColor('#000')
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
+                            ->required(),
+                    ])->columns(3),
+
                 Forms\Components\DatePicker::make('hired_date')
                     ->default(now())
                     ->disabled()
