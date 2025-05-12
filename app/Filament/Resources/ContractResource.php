@@ -136,42 +136,48 @@ class ContractResource extends Resource
                         SignaturePad::make('tenant_signature')
                             ->label('Tenant Signature')
                             ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0') 
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')  // Background color on dark mode
+                            ->exportBackgroundColor('rgba(0,0,0,0)')  // Background color on export
+                            ->penColor('#000')  // Pen color on light mode
+                            ->penColorOnDark('#000')  // Pen color on dark mode
+                            ->exportPenColor('#000')
                             ->clearable(true)
                             ->downloadable(false)
                             ->undoable(true)
                             ->confirmable(true)
-                            ->required(),
+                            ->required()
+                            ->modalSize('xl')  // This makes the signature pad larger when clicked
+                            ->modalHeading('Tenant Signature'),
 
                         SignaturePad::make('witness_signature')
                             ->label('Witness Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0') 
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')
+                            ->exportBackgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->penColorOnDark('#000')
+                            ->exportPenColor('#000')
                             ->clearable(true)
                             ->downloadable(false)
                             ->undoable(true)
                             ->confirmable(true)
-                            ->required(),
+                            ->required()
+                            ->modalSize('xl')
+                            ->modalHeading('Witness Signature'),
                         SignaturePad::make('landlord_signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0') 
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->backgroundColorOnDark('rgba(0,0,0,0)')
+                            ->exportBackgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->penColorOnDark('#000')
+                            ->exportPenColor('#000')
                             ->clearable(true)
                             ->downloadable(false)
                             ->undoable(true)
                             ->confirmable(true)
-                            ->required(),
+                            ->required()
+                            ->modalSize('xl')
+                            ->modalHeading('Landlord Signature'),
                     ])->columns(3),
 
                 // يا غالي هاي الحالة فعال ومش فعال اذا كانت بين التاريخين البداية والنهاية بكون فعال غير هيك بكون غير فعال    
