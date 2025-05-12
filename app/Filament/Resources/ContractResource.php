@@ -32,27 +32,7 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
-                // Signatures Section at the top
-                Forms\Components\Section::make('التوقيعات')
-                    ->schema([
-                        SignaturePad::make('tenant_signature')
-                            ->label('توقيع المستأجر')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
 
-                        SignaturePad::make('witness_signature')
-                            ->label('توقيع الشاهد')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-
-                        SignaturePad::make('landlord_signature')
-                            ->label('توقيع المؤجر')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-                    ])->columns(3),
 
                 Forms\Components\TextInput::make('landlord_name')
                     ->required()
@@ -148,6 +128,35 @@ class ContractResource extends Resource
                     ->required(),
                 Forms\Components\Textarea::make('terms_and_conditions_extra')
                     ->nullable(),
+
+                // Signatures Section
+                Forms\Components\Section::make('Contract Signatures')
+                    ->description('Click on each signature field to open the signature pad')
+                    ->schema([
+                        SignaturePad::make('tenant_signature')
+                            ->label('Tenant Signature')
+                            ->modalHeading('Add Tenant Signature')
+                            ->modalButton('Click to Sign')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        SignaturePad::make('witness_signature')
+                            ->label('Witness Signature')
+                            ->modalHeading('Add Witness Signature')
+                            ->modalButton('Click to Sign')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        SignaturePad::make('landlord_signature')
+                            ->label('Landlord Signature')
+                            ->modalHeading('Add Landlord Signature')
+                            ->modalButton('Click to Sign')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+                    ])->columns(3),
 
                 // يا غالي هاي الحالة فعال ومش فعال اذا كانت بين التاريخين البداية والنهاية بكون فعال غير هيك بكون غير فعال    
                 Forms\Components\Select::make('status')
