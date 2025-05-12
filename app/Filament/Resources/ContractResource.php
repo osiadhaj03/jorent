@@ -96,17 +96,18 @@ class ContractResource extends Resource
                                 $set('property_fixtures', null);
                             }
                         } else {
+                            // Default values when no property is selected
                             $set('property_type', 'شقة سكنية');
-                            $set('property_location', null);
-                            $set('floor_number', null);
-                            $set('apartment_number', null);
-                            $set('land_piece_number', null);
-                            $set('basin_number', null);
-                            $set('area_name', null);
-                            $set('street_name', null);
-                            $set('building_number', null);
-                            $set('building_name', null);
-                            $set('property_fixtures', null);
+                            $set('property_location', 'غير محدد');
+                            $set('floor_number', 'غير محدد');
+                            $set('apartment_number', 'غير محدد');
+                            $set('land_piece_number', 'غير محدد');
+                            $set('basin_number', 'غير محدد');
+                            $set('area_name', 'غير محدد');
+                            $set('street_name', 'غير محدد');
+                            $set('building_number', 'غير محدد');
+                            $set('building_name', 'غير محدد');
+                            $set('property_fixtures', 'غير محدد');
                         }
                     }),
                 Forms\Components\TextInput::make('property_type')
