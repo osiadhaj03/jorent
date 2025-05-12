@@ -33,7 +33,9 @@ class Tenant extends Model
         'employer_phone',
         'emergency_contact_name',
         'emergency_contact_phone',
-        'notes'
+        'notes',
+        'tenant_signature',
+        'landlord_signature'
     ];
 
     protected $casts = [
