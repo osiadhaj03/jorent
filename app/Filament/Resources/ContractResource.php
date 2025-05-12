@@ -16,6 +16,8 @@ use Filament\Forms\Set;
 use App\Models\Property;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\DatePicker; // تمت الإضافة
+use Filament\Forms\Components\TextInput; // تمت الإضافة
 
 class ContractResource extends Resource
 {
@@ -31,7 +33,7 @@ class ContractResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'firstname') // يمكنك تغيير 'firstname' إلى 'full_name' إذا كان ذلك مناسبًا
+                    ->relationship('tenant', 'firstname')
                     ->required()
                     ->label('المستأجر')
                     ->reactive()
@@ -46,14 +48,14 @@ class ContractResource extends Resource
                 Forms\Components\TextInput::make('landlord_national_id')
                     ->required()
                     ->label('الرقم الوطني للمؤجر')
-                    ->default(fn () => Auth::user()?->national_id) // تأكد من أن نموذج المستخدم لديه حقل 'national_id'
+                    ->default(fn () => Auth::user()?->national_id)
                     ->disabled(),
                 Forms\Components\TextInput::make('tenant_national_id')
                     ->required()
                     ->label('الرقم الوطني للمستأجر')
                     ->disabled(),
                 Forms\Components\Select::make('property_id')
-                    ->relationship('property', 'name') // افترض أن نموذج العقار لديه 'name'. قم بتغييره إذا لزم الأمر.
+                    ->relationship('property', 'name')
                     ->required()
                     ->label('العقار')
                     ->reactive()
@@ -68,11 +70,9 @@ class ContractResource extends Resource
                                     if ($property->address->area_name) $locationParts[] = 'منطقة ' . $property->address->area_name;
                                     if ($property->address->street_name) $locationParts[] = 'شارع ' . $property->address->street_name;
                                     if ($property->address->building_number) $locationParts[] = 'مبنى ' . $property->address->building_number;
-                                    // يمكنك إضافة المزيد من تفاصيل العنوان هنا
                                 }
                                 $fullLocation = implode(', ', array_filter($locationParts));
-                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null)); // استخدم حقل موقع مخصص من العقار كاحتياطي
-
+                                $set('property_location', $fullLocation ?: ($property->custom_location ?: null));
                                 $set('floor_number', $property->floor_number);
                                 $set('apartment_number', $property->apartment_number);
                                 $set('land_piece_number', $property->address?->land_piece_number);
@@ -80,10 +80,9 @@ class ContractResource extends Resource
                                 $set('area_name', $property->address?->area_name);
                                 $set('street_name', $property->address?->street_name);
                                 $set('building_number', $property->address?->building_number);
-                                $set('building_name', $property->building_name); // افترض أن اسم المبنى موجود في نموذج العقار مباشرة
-                                $set('property_fixtures', $property->fixtures); // افترض أن نموذج العقار لديه حقل 'fixtures'
+                                $set('building_name', $property->building_name);
+                                $set('property_fixtures', $property->fixtures);
                             } else {
-                                // مسح الحقول إذا لم يتم العثور على العقار
                                 $set('property_type', 'شقة سكنية');
                                 $set('property_location', null);
                                 $set('floor_number', null);
@@ -97,7 +96,6 @@ class ContractResource extends Resource
                                 $set('property_fixtures', null);
                             }
                         } else {
-                            // إعادة تعيين الحقول إلى القيم الافتراضية أو مسحها إذا تم إلغاء تحديد العقار
                             $set('property_type', 'شقة سكنية');
                             $set('property_location', null);
                             $set('floor_number', null);
@@ -160,16 +158,16 @@ class ContractResource extends Resource
                     ->default('داخل جدران الشقة فقط')
                     ->required()
                     ->label('حدود العقار'),
-                Forms\Components\DatePicker::make('start_date')
+                DatePicker::make('start_date') // تم التعديل هنا
                     ->required()
                     ->label('تاريخ بداية العقد'),
-                Forms\Components\DatePicker::make('end_date')
+                DatePicker::make('end_date') // تم التعديل هنا
                     ->required()
                     ->label('تاريخ نهاية العقد'),
-                Forms\Components\TextInput::make('contract_period')
+                TextInput::make('contract_period') // تم التعديل هنا
                     ->required()
                     ->label('مدة العقد'),
-                Forms\Components\TextInput::make('annual_rent')
+                TextInput::make('annual_rent') // تم التعديل هنا
                     ->numeric()
                     ->required()
                     ->label('قيمة الإيجار السنوي'),
@@ -182,14 +180,14 @@ class ContractResource extends Resource
                     ])
                     ->required()
                     ->label('تكرار الدفع'),
-                Forms\Components\TextInput::make('payment_amount')
+                TextInput::make('payment_amount') // تم التعديل هنا
                     ->numeric()
                     ->required()
                     ->label('قيمة الدفعة'),
                 Forms\Components\Toggle::make('education_tax')
                     ->default(true)
                     ->label('ضريبة المعارف'),
-                Forms\Components\TextInput::make('education_tax_amount')
+                TextInput::make('education_tax_amount') // تم التعديل هنا
                     ->numeric()
                     ->label('قيمة ضريبة المعارف'),
                 Forms\Components\Textarea::make('property_fixtures')
@@ -210,89 +208,90 @@ class ContractResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('tenant.full_name')
-                    ->sortable()
-                    ->searchable()
-                    ->label('المستأجر'),
-                Tables\Columns\TextColumn::make('property_location')
-                    ->searchable()
-                    ->label('موقع العقار'),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->date()
-                    ->sortable()
-                    ->label('تاريخ البداية'),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->date()
-                    ->sortable()
-                    ->label('تاريخ النهاية'),
-                Tables\Columns\TextColumn::make('annual_rent')
-                    ->money('jod')
-                    ->sortable()
-                    ->label('الإيجار السنوي'),
-                Tables\Columns\TextColumn::make('payment_frequency')
-                    ->label('تكرار الدفع')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'monthly' => 'شهري',
-                        'quarterly' => 'ربع سنوي',
-                        'semi_annual' => 'نصف سنوي',
-                        'annual' => 'سنوي',
-                    }),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'active' => 'success',
-                        'expired' => 'danger',
-                        'terminated' => 'warning',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'active' => 'فعال',
-                        'expired' => 'منتهي',
-                        'terminated' => 'ملغي',
-                    })
-                    ->label('الحالة'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label('تاريخ الإنشاء'),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label('تاريخ التحديث'),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+    // باقي الكود بدون تغيير ...
+public static function table(Table $table): Table
+{
+return $table
+->columns([
+Tables\Columns\TextColumn::make('tenant.full_name')
+->sortable()
+->searchable()
+->label('المستأجر'),
+Tables\Columns\TextColumn::make('property_location')
+->searchable()
+->label('موقع العقار'),
+Tables\Columns\TextColumn::make('start_date')
+->date()
+->sortable()
+->label('تاريخ البداية'),
+Tables\Columns\TextColumn::make('end_date')
+->date()
+->sortable()
+->label('تاريخ النهاية'),
+Tables\Columns\TextColumn::make('annual_rent')
+->money('jod')
+->sortable()
+->label('الإيجار السنوي'),
+Tables\Columns\TextColumn::make('payment_frequency')
+->label('تكرار الدفع')
+->formatStateUsing(fn (string $state): string => match ($state) {
+'monthly' => 'شهري',
+'quarterly' => 'ربع سنوي',
+'semi_annual' => 'نصف سنوي',
+'annual' => 'سنوي',
+}),
+Tables\Columns\TextColumn::make('status')
+->badge()
+->color(fn (string $state): string => match ($state) {
+'active' => 'success',
+'expired' => 'danger',
+'terminated' => 'warning',
+})
+->formatStateUsing(fn (string $state): string => match ($state) {
+'active' => 'فعال',
+'expired' => 'منتهي',
+'terminated' => 'ملغي',
+})
+->label('الحالة'),
+Tables\Columns\TextColumn::make('created_at')
+->dateTime()
+->sortable()
+->toggleable(isToggledHiddenByDefault: true)
+->label('تاريخ الإنشاء'),
+Tables\Columns\TextColumn::make('updated_at')
+->dateTime()
+->sortable()
+->toggleable(isToggledHiddenByDefault: true)
+->label('تاريخ التحديث'),
+])
+->filters([
+//
+])
+->actions([
+Tables\Actions\ViewAction::make(),
+Tables\Actions\EditAction::make(),
+])
+->bulkActions([
+Tables\Actions\BulkActionGroup::make([
+Tables\Actions\DeleteBulkAction::make(),
+]),
+]);
+}
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+public static function getRelations(): array
+{
+return [
+//
+];
+}
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListContracts::route('/'),
-            'create' => Pages\CreateContract::route('/create'),
-            'view' => Pages\ViewContract::route('/{record}'),
-            'edit' => Pages\EditContract::route('/{record}/edit'),
-        ];
-    }
+public static function getPages(): array
+{
+return [
+'index' => Pages\ListContracts::route('/'),
+'create' => Pages\CreateContract::route('/create'),
+'view' => Pages\ViewContract::route('/{record}'),
+'edit' => Pages\EditContract::route('/{record}/edit'),
+];
+}
 }
