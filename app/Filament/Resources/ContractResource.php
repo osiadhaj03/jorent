@@ -59,7 +59,6 @@ class ContractResource extends Resource
                                 $set('basin_number', $property->basin_number );
                                 $set('property_number', $property->property_number );
                                 $set('street_name', $property->street_name );
-                               // $set('country', $property->country ?? '');
                             }
                         } else {
                             $set('governorate', null);
@@ -70,11 +69,9 @@ class ContractResource extends Resource
                             $set('basin_number', null);
                             $set('property_number', null);
                             $set('street_name', null);
-                            //$set('country', null);
                         }
                         $set('unit_id', null);
                     }),
-                    /////هون بختار الوحدة السكنية حسب العقار
                 Forms\Components\Select::make('unit_id')
                     ->options(function (callable $get) {
                         $propertyId = $get('property_id');
@@ -82,6 +79,51 @@ class ContractResource extends Resource
                     })
                     ->required()
                     ->label('Unit Name'),
+
+                // Add signature fields
+                Forms\Components\Section::make('Signatures')
+                    ->schema([
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('tenant_signature')
+                            ->label('Tenant Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('witness_signature')
+                            ->label('Witness Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('landlord_signature')
+                            ->label('Landlord Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+                    ])->columns(3),
+
+                // Add the three signature fields
+                Forms\Components\Section::make('Signatures')
+                    ->schema([
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('tenant_signature')
+                            ->label('Tenant Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('witness_signature')
+                            ->label('Witness Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('landlord_signature')
+                            ->label('Landlord Signature')
+                            ->backgroundColor('#ffffff')
+                            ->penColor('#000000')
+                            ->required(),
+                    ])->columns(3),
+
                 ///////////    
                 Forms\Components\TextInput::make('governorate')
                     ->disabled()
