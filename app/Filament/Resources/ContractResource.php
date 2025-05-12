@@ -34,14 +34,28 @@ class ContractResource extends Resource
                 Forms\Components\TextInput::make('landlord_name')
                     ->required()
                     ->label('Landlord Name'),
+
+
                 Forms\Components\Select::make('tenant_id')
                     ->relationship('tenant', 'firstname')
                     ->required()
                     ->label('Tenant Name'),
+
+                Forms\Components\Select::make('property_id')
+                    ->options(Property::all()->pluck('name', 'id'))
+                    ->required()
+                    ->label('Property Name')
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set) => $set('unit_id', null)),
                 Forms\Components\Select::make('unit_id')
-                    ->relationship('unit', 'name')
+                    ->options(function (callable $get) {
+                        $propertyId = $get('property_id');
+                        return $propertyId ? Unit::where('property_id', $propertyId)->pluck('name', 'id') : [];
+                    })
                     ->required()
                     ->label('Unit Name'),
+
+                    
                 Forms\Components\DatePicker::make('start_date')
                     ->required(),
                 Forms\Components\DatePicker::make('end_date')
