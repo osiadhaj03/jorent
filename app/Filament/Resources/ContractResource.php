@@ -135,20 +135,42 @@ class ContractResource extends Resource
                     ->schema([
                         SignaturePad::make('tenant_signature')
                             ->label('Tenant Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
+                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+                            ->penColor('#000')                  // Pen color on light mode
+                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+                            ->exportPenColor('#0f0') 
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
                             ->required(),
 
                         SignaturePad::make('witness_signature')
                             ->label('Witness Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
+                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+                            ->penColor('#000')                  // Pen color on light mode
+                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+                            ->exportPenColor('#0f0') 
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
                             ->required(),
-
                         SignaturePad::make('landlord_signature')
-                            ->label('Landlord Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
+                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+                            ->penColor('#000')                  // Pen color on light mode
+                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+                            ->exportPenColor('#0f0') 
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
                             ->required(),
                     ])->columns(3),
 
