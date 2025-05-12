@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('floor_area', 10, 2)->nullable(); 
             $table->decimal('total_area', 10, 2)->nullable(); 
             $table->json('features')->nullable();
-
+            
 
             
             $table->timestamps();
