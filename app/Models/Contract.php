@@ -12,20 +12,9 @@ class Contract extends Model
     protected $fillable = [
         'tenant_id',
         'property_id',
+        'unit_id',
         'landlord_national_id',
         'tenant_national_id',
-        'property_type',
-        'property_location',
-        'floor_number',
-        'apartment_number',
-        'land_piece_number',
-        'basin_number',
-        'area_name',
-        'street_name',
-        'building_number',
-        'building_name',
-        'usage_type',
-        'property_boundaries',
         'start_date',
         'end_date',
         'contract_period',
@@ -34,7 +23,6 @@ class Contract extends Model
         'payment_amount',
         'education_tax',
         'education_tax_amount',
-        'property_fixtures',
         'additional_terms',
         'status'
     ];
@@ -60,5 +48,10 @@ class Contract extends Model
     public function property()
     {
         return $this->belongsTo(Property::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }
