@@ -17,6 +17,7 @@ use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
+use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 class ContractResource extends Resource
 {
@@ -80,44 +81,21 @@ class ContractResource extends Resource
                     ->required()
                     ->label('Unit Name'),
 
-                // Add signature fields
                 Forms\Components\Section::make('Signatures')
                     ->schema([
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('tenant_signature')
+                        SignaturePad::make('tenant_signature')
                             ->label('Tenant Signature')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
                             ->required(),
 
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('witness_signature')
+                        SignaturePad::make('witness_signature')
                             ->label('Witness Signature')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
                             ->required(),
 
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('landlord_signature')
-                            ->label('Landlord Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-                    ])->columns(3),
-
-                // Add the three signature fields
-                Forms\Components\Section::make('Signatures')
-                    ->schema([
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('tenant_signature')
-                            ->label('Tenant Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('#ffffff')
-                            ->penColor('#000000')
-                            ->required(),
-
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('landlord_signature')
+                        SignaturePad::make('landlord_signature')
                             ->label('Landlord Signature')
                             ->backgroundColor('#ffffff')
                             ->penColor('#000000')
