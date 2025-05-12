@@ -51,14 +51,14 @@ class ContractResource extends Resource
                         if ($propertyId) {
                             $property = Property::find($propertyId);
                             if ($property) {
-                                $set('governorate', $property->governorate ?? '');
-                                $set('city', $property->city ?? '');
-                                $set('district', $property->district ?? '');
-                                $set('building_number', $property->building_number ?? '');
-                                $set('plot_number', $property->plot_number ?? '');
-                                $set('basin_number', $property->basin_number ?? '');
-                                $set('property_number', $property->property_number ?? '');
-                                $set('street_name', $property->street_name ?? '');
+                                $set('governorate', $property->governorate );
+                                $set('city', $property->city );
+                                $set('district', $property->district );
+                                $set('building_number', $property->building_number );
+                                $set('plot_number', $property->plot_number );
+                                $set('basin_number', $property->basin_number );
+                                $set('property_number', $property->property_number );
+                                $set('street_name', $property->street_name );
                                // $set('country', $property->country ?? '');
                             }
                         } else {
