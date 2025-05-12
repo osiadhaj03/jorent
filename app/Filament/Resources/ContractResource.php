@@ -46,7 +46,35 @@ class ContractResource extends Resource
                     ->required()
                     ->label('Property Name')
                     ->reactive()
-                    ->afterStateUpdated(fn (callable $set) => $set('unit_id', null)),
+                    ->afterStateUpdated(function (callable $set, callable $get) {
+                        $propertyId = $get('property_id');
+                        if ($propertyId) {
+                            $property = Property::find($propertyId);
+                            if ($property) {
+                                $set('governorate', $property->governorate ?? '');
+                                $set('city', $property->city ?? '');
+                                $set('district', $property->district ?? '');
+                                $set('building_number', $property->building_number ?? '');
+                                $set('plot_number', $property->plot_number ?? '');
+                                $set('basin_number', $property->basin_number ?? '');
+                                $set('property_number', $property->property_number ?? '');
+                                $set('street_name', $property->street_name ?? '');
+                               // $set('country', $property->country ?? '');
+                            }
+                        } else {
+                            $set('governorate', null);
+                            $set('city', null);
+                            $set('district', null);
+                            $set('building_number', null);
+                            $set('plot_number', null);
+                            $set('basin_number', null);
+                            $set('property_number', null);
+                            $set('street_name', null);
+                            //$set('country', null);
+                        }
+                        $set('unit_id', null);
+                    }),
+                    /////هون بختار الوحدة السكنية حسب العقار
                 Forms\Components\Select::make('unit_id')
                     ->options(function (callable $get) {
                         $propertyId = $get('property_id');
@@ -54,8 +82,34 @@ class ContractResource extends Resource
                     })
                     ->required()
                     ->label('Unit Name'),
+                ///////////    
+                Forms\Components\TextInput::make('governorate')
+                    ->disabled()
+                    ->label('Governorate (المحافظة)'),
+                Forms\Components\TextInput::make('city')
+                    ->disabled()
+                    ->label('City'),
+                Forms\Components\TextInput::make('district')
+                    ->disabled()
+                    ->label('District(الحي)'),
+                Forms\Components\TextInput::make('building_number')
+                    ->disabled()
+                    ->label('Building Number'),
+                Forms\Components\TextInput::make('plot_number')
+                    ->disabled()
+                    ->label('Plot Number(رقم القطعة)'),
+                Forms\Components\TextInput::make('basin_number')
+                    ->disabled()
+                    ->label('Basin Number(رقم الحوض)'),
+                Forms\Components\TextInput::make('property_number')
+                    ->disabled()
+                    ->label('Property Number(رقم المبنى العقاري)'),
+                Forms\Components\TextInput::make('street_name')
+                    ->disabled()
+                    ->label('Street Name'),
 
-                    
+
+/////////////////////////////////////////////////////////
                 Forms\Components\DatePicker::make('start_date')
                     ->required(),
                 Forms\Components\DatePicker::make('end_date')
@@ -73,12 +127,30 @@ class ContractResource extends Resource
                     ->required(),
                 Forms\Components\Textarea::make('terms_and_conditions_extra')
                     ->nullable(),
+
+                // يا غالي هاي الحالة فعال ومش فعال اذا كانت بين التاريخين البداية والنهاية بكون فعال غير هيك بكون غير فعال    
                 Forms\Components\Select::make('status')
                     ->options([
                         'active' => 'Active',
                         'inactive' => 'Inactive',
                     ])
-                    ->default('active'),
+                    ->default('active')
+                    ->reactive()
+                    ->afterStateHydrated(function (callable $set, callable $get) {
+                        $startDate = $get('start_date');
+                        $endDate = $get('end_date');
+                        $currentDate = now();
+
+                        if ($startDate && $endDate) {
+                            if ($currentDate->between($startDate, $endDate)) {
+                                $set('status', 'active');
+                            } else {
+                                $set('status', 'inactive');
+                            }
+                        }
+                    }),
+
+/////////////////////////////////////////////
                 Forms\Components\DatePicker::make('hired_date')
                     ->default(now())
                     ->disabled()
