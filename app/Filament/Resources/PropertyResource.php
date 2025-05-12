@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class PropertyResource extends Resource
 {
@@ -24,7 +25,7 @@ class PropertyResource extends Resource
     protected static ?string $label = 'Property';
     protected static ?string $pluralLabel = 'Properties';
     protected static ?string $slug = 'properties';
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -107,34 +108,51 @@ class PropertyResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('address.country')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.country', $state)),
                         Forms\Components\TextInput::make('address.governorate')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.governorate', $state)),
                         Forms\Components\TextInput::make('address.city')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.city', $state)),
                         Forms\Components\TextInput::make('address.district')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.district', $state)),
                         Forms\Components\TextInput::make('address.building_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.building_number', $state)),
                         Forms\Components\TextInput::make('address.plot_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.plot_number', $state)),
                         Forms\Components\TextInput::make('address.basin_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.basin_number', $state)),
                         Forms\Components\TextInput::make('address.property_number')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.property_number', $state)),
                         Forms\Components\TextInput::make('address.street_name')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.street_name', $state)),
                     ]),
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -182,7 +200,7 @@ class PropertyResource extends Resource
                     ->searchable()
                     ->label('Floors Count')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('floor_area')   
+                Tables\Columns\TextColumn::make('floor_area')
                     ->sortable()
                     ->searchable()
                     ->label('Floor Area')
@@ -205,41 +223,41 @@ class PropertyResource extends Resource
                     ->label('Updated At')
                     ->toggleable(),
             ])
-        
+
             ->filters([
                 //
-Tables\Filters\Filter::make('id')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('id')),
+                Tables\Filters\Filter::make('id')
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('id')),
                 Tables\Filters\Filter::make('name')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('name')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('name')),
                 Tables\Filters\Filter::make('description')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('description')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('description')),
                 Tables\Filters\Filter::make('acc.firstname')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('acc.firstname')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('acc.firstname')),
                 Tables\Filters\Filter::make('type1')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('type1')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('type1')),
                 Tables\Filters\Filter::make('type2')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('type2')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('type2')),
                 Tables\Filters\Filter::make('birth_date')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('birth_date')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('birth_date')),
                 Tables\Filters\Filter::make('floors_count')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('floors_count')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('floors_count')),
                 Tables\Filters\Filter::make('floor_area')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('floor_area')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('floor_area')),
                 Tables\Filters\Filter::make('total_area')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('total_area')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('total_area')),
                 Tables\Filters\Filter::make('created_at')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('created_at')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('created_at')),
                 Tables\Filters\Filter::make('updated_at')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('updated_at')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('updated_at')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make()
 
             ])
-                            ->bulkActions([
+            ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
@@ -260,5 +278,35 @@ Tables\Actions\DeleteAction::make(),
             'create' => Pages\CreateProperty::route('/create'),
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
+    }
+
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        // Extract address data
+        $addressData = $data['address'];
+        unset($data['address']);
+
+        // Create the property
+        $property = Property::create($data);
+
+        // Save the address
+        $property->address()->create($addressData);
+
+        return $data;
+    }
+
+    public static function mutateFormDataBeforeSave(array $data, Model $record): array
+    {
+        // Extract address data
+        $addressData = $data['address'];
+        unset($data['address']);
+
+        // Update the property
+        $record->update($data);
+
+        // Update or create the address
+        $record->address()->updateOrCreate([], $addressData);
+
+        return $data;
     }
 }

@@ -117,7 +117,7 @@ class AccResource extends Resource
                     ->label('Hired Date')
                     ->disabled(),
                 Forms\Components\TextInput::make('hired_by')
-                    ->default(auth()->user()->name)
+                    ->default(\Illuminate\Support\Facades\Auth::user()?->name)
                     ->label('Hired By')
                     ->maxLength(255)
                     ->disabled(),
