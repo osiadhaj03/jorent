@@ -17,6 +17,7 @@ use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 class ContractResource extends Resource
@@ -51,15 +52,15 @@ class ContractResource extends Resource
                     ->reactive()
                     ->afterStateUpdated(function (callable $set, callable $get) {
                         $propertyId = $get('property_id');
-                        \Log::info('Property ID selected: ' . $propertyId);
+                        Log::info('Property ID selected: ' . $propertyId);
                         
                         if ($propertyId) {
                             $property = Property::with('address')->find($propertyId);
-                            \Log::info('Property found: ' . ($property ? 'yes' : 'no'));
-                            \Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
+                            Log::info('Property found: ' . ($property ? 'yes' : 'no'));
+                            Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
                             
                             if ($property && $property->address) {
-                                \Log::info('Address details: ' . json_encode($property->address->toArray()));
+                                Log::info('Address details: ' . json_encode($property->address->toArray()));
                                 $set('governorate', $property->address->governorate);
                                 $set('city', $property->address->city);
                                 $set('district', $property->address->district);
@@ -68,9 +69,9 @@ class ContractResource extends Resource
                                 $set('basin_number', $property->address->basin_number);
                                 $set('property_number', $property->address->property_number);
                                 $set('street_name', $property->address->street_name);
-                                \Log::info('Fields have been set');
+                                Log::info('Fields have been set');
                             } else {
-                                \Log::info('Property or address not found, setting fields to null');
+                                Log::info('Property or address not found, setting fields to null');
                                 $set('governorate', null);
                                 $set('city', null);
                                 $set('district', null);
@@ -177,6 +178,20 @@ class ContractResource extends Resource
                             ->confirmable(true)
                             ->required(),
 
+                        SignaturePad::make('witness_signature')
+                            ->label('Witness Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+                            ->penColor('#000')                  // Pen color on light mode
+                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
+                            ->clearable(true)
+                            ->downloadable(false)
+                            ->undoable(true)
+                            ->confirmable(true)
+                            ->required(),
+                            
                         SignaturePad::make('witness_signature')
                             ->label('Witness Signature')
                             ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
