@@ -7,7 +7,6 @@ use App\Models\Property;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Support\Facades\Filament;
 
@@ -98,7 +97,7 @@ class PropertyResource extends Resource
         }
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
@@ -116,7 +115,6 @@ class PropertyResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-
     public static function getPages(): array
     {
         return [
