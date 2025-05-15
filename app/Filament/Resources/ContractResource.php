@@ -85,28 +85,28 @@ class ContractResource extends Resource
 
                 ///////////    
                 Forms\Components\TextInput::make('governorate')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Governorate (المحافظة)'),
                 Forms\Components\TextInput::make('city')
-                    ->disabled()
+                    ->readOnly()
                     ->label('City'),
                 Forms\Components\TextInput::make('district')
-                    ->disabled()
+                    ->readOnly()
                     ->label('District(الحي)'),
                 Forms\Components\TextInput::make('building_number')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Building Number'),
                 Forms\Components\TextInput::make('plot_number')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Plot Number(رقم القطعة)'),
                 Forms\Components\TextInput::make('basin_number')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Basin Number(رقم الحوض)'),
                 Forms\Components\TextInput::make('property_number')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Property Number(رقم المبنى العقاري)'),
                 Forms\Components\TextInput::make('street_name')
-                    ->disabled()
+                    ->readOnly()
                     ->label('Street Name'),
 
 
@@ -200,11 +200,11 @@ class ContractResource extends Resource
 
                 Forms\Components\DatePicker::make('hired_date')
                     ->default(now())
-                    ->disabled()
+                    ->readOnly()
                     ->label('Hired Date'),
                 Forms\Components\TextInput::make('hired_by')
                     ->default(Auth::user()->name)
-                    ->disabled()
+                    ->readOnly()
                     ->label('Hired By'),
 
             
