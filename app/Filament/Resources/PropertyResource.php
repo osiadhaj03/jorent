@@ -267,7 +267,7 @@ class PropertyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AddressRelationManager::class,
         ];
     }
 
@@ -280,33 +280,5 @@ class PropertyResource extends Resource
         ];
     }
 
-    public static function mutateFormDataBeforeCreate(array $data): array
-    {
-        // Extract address data
-        $addressData = $data['address'];
-        unset($data['address']);
 
-        // Create the property
-        $property = Property::create($data);
-
-        // Save the address
-        $property->address()->create($addressData);
-
-        return $data;
-    }
-
-    public static function mutateFormDataBeforeSave(array $data, Model $record): array
-    {
-        // Extract address data
-        $addressData = $data['address'];
-        unset($data['address']);
-
-        // Update the property
-        $record->update($data);
-
-        // Update or create the address
-        $record->address()->updateOrCreate([], $addressData);
-
-        return $data;
-    }
 }
