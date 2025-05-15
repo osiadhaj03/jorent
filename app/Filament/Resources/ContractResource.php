@@ -150,54 +150,54 @@ class ContractResource extends Resource
                             }
                         }
                     }),
-
-                // Signatures Section
-                Forms\Components\Section::make('Contract Signatures')
-                    ->description('Click on each signature field to open the signature pad')
-                    ->schema([
-                        SignaturePad::make('tenant_signature')
-                            ->label('Tenant Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required(),
-
-                        SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required(),
-                            
-                        SignaturePad::make('landlord_signature')
-                            ->label('Landlord Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')
-                            ->clearable(true)                   // Pen color on export (defaults to penColor)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
-                            ->required(),
-                    ])->columns(3),
-
+//
+//                // Signatures Section
+//                Forms\Components\Section::make('Contract Signatures')
+//                    ->description('Click on each signature field to open the signature pad')
+//                    ->schema([
+//                        SignaturePad::make('tenant_signature')
+//                            ->label('Tenant Signature')
+//                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+//                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+//                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+//                            ->penColor('#000')                  // Pen color on light mode
+//                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+//                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
+//                            ->clearable(true)
+//                            ->downloadable(false)
+//                            ->undoable(true)
+//                            ->confirmable(true)
+//                            ->required(),
+//
+//                        SignaturePad::make('witness_signature')
+//                            ->label('Witness Signature')
+//                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+//                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+//                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+//                            ->penColor('#000')                  // Pen color on light mode
+//                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+//                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
+//                            ->clearable(true)
+//                            ->downloadable(false)
+//                            ->undoable(true)
+//                            ->confirmable(true)
+//                            ->required(),
+//                            
+//                        SignaturePad::make('landlord_signature')
+//                            ->label('Landlord Signature')
+//                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
+//                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
+//                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
+//                            ->penColor('#000')                  // Pen color on light mode
+//                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
+//                            ->exportPenColor('#0f0')
+//                            ->clearable(true)                   // Pen color on export (defaults to penColor)
+//                            ->downloadable(false)
+//                            ->undoable(true)
+//                            ->confirmable(true)
+//                            ->required(),
+//                    ])->columns(3),
+//
                 Forms\Components\DatePicker::make('hired_date')
                     ->default(now())
                     ->disabled()

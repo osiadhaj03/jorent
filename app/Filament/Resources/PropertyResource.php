@@ -226,30 +226,7 @@ class PropertyResource extends Resource
 
             ->filters([
                 //
-                Tables\Filters\Filter::make('id')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('id')),
-                Tables\Filters\Filter::make('name')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('name')),
-                Tables\Filters\Filter::make('description')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('description')),
-                Tables\Filters\Filter::make('acc.firstname')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('acc.firstname')),
-                Tables\Filters\Filter::make('type1')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('type1')),
-                Tables\Filters\Filter::make('type2')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('type2')),
-                Tables\Filters\Filter::make('birth_date')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('birth_date')),
-                Tables\Filters\Filter::make('floors_count')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('floors_count')),
-                Tables\Filters\Filter::make('floor_area')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('floor_area')),
-                Tables\Filters\Filter::make('total_area')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('total_area')),
-                Tables\Filters\Filter::make('created_at')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('created_at')),
-                Tables\Filters\Filter::make('updated_at')
-                    ->query(fn(Builder $query): Builder => $query->whereNotNull('updated_at')),
+              
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -267,7 +244,7 @@ class PropertyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AddressRelationManager::class,
+           // RelationManagers\AddressRelationManager::class,
         ];
     }
 

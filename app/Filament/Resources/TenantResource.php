@@ -117,7 +117,7 @@ class TenantResource extends Resource
                             ->label('Hired Date')
                             ->disabled(),
                         Forms\Components\TextInput::make('hired_by')
-                            ->default(optional(auth()->user())->name)
+                            ->default(optional(\Illuminate\Support\Facades\Auth::user())->name)
                             ->label('Tented by')
                             ->maxLength(255)
                             ->disabled(),
