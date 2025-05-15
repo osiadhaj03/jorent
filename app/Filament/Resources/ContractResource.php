@@ -51,27 +51,35 @@ class ContractResource extends Resource
                     ->reactive()
                     ->afterStateUpdated(function (callable $set, callable $get) {
                         $propertyId = $get('property_id');
+                        \Log::info('Property ID selected: ' . $propertyId);
+                        
                         if ($propertyId) {
-                            $property = Property::find($propertyId);
-                            if ($property) {
-                                $set('governorate', $property->governorate );
-                                $set('city', $property->city );
-                                $set('district', $property->district );
-                                $set('building_number', $property->building_number );
-                                $set('plot_number', $property->plot_number );
-                                $set('basin_number', $property->basin_number );
-                                $set('property_number', $property->property_number );
-                                $set('street_name', $property->street_name );
+                            $property = Property::with('address')->find($propertyId);
+                            \Log::info('Property found: ' . ($property ? 'yes' : 'no'));
+                            \Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
+                            
+                            if ($property && $property->address) {
+                                \Log::info('Address details: ' . json_encode($property->address->toArray()));
+                                $set('governorate', $property->address->governorate);
+                                $set('city', $property->address->city);
+                                $set('district', $property->address->district);
+                                $set('building_number', $property->address->building_number);
+                                $set('plot_number', $property->address->plot_number);
+                                $set('basin_number', $property->address->basin_number);
+                                $set('property_number', $property->address->property_number);
+                                $set('street_name', $property->address->street_name);
+                                \Log::info('Fields have been set');
+                            } else {
+                                \Log::info('Property or address not found, setting fields to null');
+                                $set('governorate', null);
+                                $set('city', null);
+                                $set('district', null);
+                                $set('building_number', null);
+                                $set('plot_number', null);
+                                $set('basin_number', null);
+                                $set('property_number', null);
+                                $set('street_name', null);
                             }
-                        } else {
-                            $set('governorate', null);
-                            $set('city', null);
-                            $set('district', null);
-                            $set('building_number', null);
-                            $set('plot_number', null);
-                            $set('basin_number', null);
-                            $set('property_number', null);
-                            $set('street_name', null);
                         }
                         $set('unit_id', null);
                     }),
