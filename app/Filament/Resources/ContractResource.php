@@ -26,7 +26,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Real Estate';
+    protected static ?string $navigationGroup = 'Real Estate Management ';
     protected static ?string $navigationLabel = 'Contracts';
     
     public static function form(Form $form): Form
@@ -141,8 +141,7 @@ class ContractResource extends Resource
                                 'yearly' => 'Yearly',
                             ])
                             ->required(),
-                        Forms\Components\Textarea::make('terms_and_conditions_extra')
-                            ->nullable(),
+
                         Forms\Components\Select::make('status')
                             ->options([
                                 'active' => 'Active',
@@ -167,8 +166,7 @@ class ContractResource extends Resource
                 Forms\Components\Section::make('الشروط والأحكام')
                     ->description('Please enter the terms and conditions of the contract')
                     ->schema([
-                        Forms\Components\Textarea::make('terms_and_conditions_extra')
-                            ->nullable(),
+                        
                         Forms\Components\Actions::make([
                             Forms\Components\Actions\Action::make('show_terms')
                                 ->label('عرض الشروط والأحكام')
@@ -176,6 +174,8 @@ class ContractResource extends Resource
                                 ->modalHeading('الشروط والأحكام')
                                 ->modalContent(view('filament.custom-terms-modal')),
                         ]),
+                        Forms\Components\Textarea::make('terms_and_conditions_extra')
+                            ->nullable(),
                     ]),
 
                 // Signatures Section
@@ -259,7 +259,72 @@ class ContractResource extends Resource
         return $table
             ->columns([
 
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('landlord_name')
+                    ->label('Landlord Name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('property.name')
+                    ->label('Property Name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
+                Tables\Columns\TextColumn::make('tenant.firstname')
+                    ->label('Tenant Name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('unit.name')
+                    ->label('Unit Name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Start Date')
+                    ->sortable()
+                    ->date()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('End Date')
+                    ->sortable()
+                    ->date()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('rent_amount')
+                    ->label('Rent Amount')
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('payment_frequency')
+                    ->label('Payment Frequency')
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('created_at')   
+                    ->label('Created At')
+                    ->sortable()
+                    ->dateTime()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->sortable()
+                    ->dateTime()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('hired_date')
+                    ->label('Hired Date')
+                    ->sortable()
+                    ->dateTime()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('hired_by')
+                    ->label('Hired By')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
             ])
             ->filters([
@@ -268,6 +333,8 @@ class ContractResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
