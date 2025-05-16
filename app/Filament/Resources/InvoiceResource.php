@@ -79,9 +79,9 @@ class InvoiceResource extends Resource
                         Forms\Components\TextInput::make('invoice_number')
                             ->label('Invoice Number')
                             ->required(),
-                                ->default(function () {
-                                   return \App\Models\Invoice::max('invoice_number') + 1;
-                            }),
+                //            ->default(function () {
+                //                return \App\Models\Invoice::max('invoice_number') + 1;
+                //            }),
                         Forms\Components\DatePicker::make('issue_date')
                             ->default(now())
                             ->label('Issue Date')
@@ -213,7 +213,7 @@ class InvoiceResource extends Resource
             ])
             ->filters([
                 //
-                
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
