@@ -188,7 +188,7 @@ class ContractResource extends Resource
                                     ])
                                     ->visible(fn (callable $get) => $get('payment_frequency') === 'yearly')
                                     ->columns(2)
-                                    ->helperText('Select the day and month for yearly payments.'),
+                                    ->helperText(null),
                                             ]),
                          ////////////////////////   
                         Forms\Components\Select::make('status')
