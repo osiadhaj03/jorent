@@ -135,17 +135,29 @@ class ContractResource extends Resource
                             ->numeric()
                             ->required(),
 
-                        Forms\Components\Select::make('payment_frequency')
-                            ->options([
-                                'daily' => 'Daily',
-                                'weekly' => 'Weekly',
-                                'monthly' => 'Monthly',
-                                'yearly' => 'Yearly',
-                            ])
-                            ->required(),
+                  //   لازم ننتقاش فيها 
+                 //    Forms\Components\Select::make('payment_frequency')
+                    //        ->options([
+                    //            'daily' => 'Daily',
+                    //            'weekly' => 'Weekly',
+                    //            'monthly' => 'Monthly',
+                    //            'yearly' => 'Yearly',
+                    //        ])
+                    //        ->required(),
+
                         Forms\Components\DatePicker::make('due_date')
                             ->required()
-                            ->visible(fn (callable $get) => $get('payment_frequency') !== 'daily'),
+                            ->visible(function (callable $get) {
+                                $startDate = $get('start_date');
+                                $endDate = $get('end_date');
+                                $dueDate = $get('due_date');
+                                if ($startDate && $endDate && $dueDate) {
+                                    return $dueDate >= $startDate && $dueDate <= $endDate;
+                                }
+                                return true;
+                            }),
+
+
                          ////////////////////////   
                         Forms\Components\Select::make('status')
                             ->options([
