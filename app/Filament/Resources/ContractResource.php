@@ -130,9 +130,12 @@ class ContractResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('end_date')
                             ->required(),
+                        Forms\Components\DatePicker::make('due_date')
+                            ->required(),
                         Forms\Components\TextInput::make('rent_amount')
                             ->numeric()
                             ->required(),
+
                         Forms\Components\Select::make('payment_frequency')
                             ->options([
                                 'daily' => 'Daily',

@@ -78,10 +78,10 @@ class InvoiceResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('invoice_number')
                             ->label('Invoice Number')
-                            ->required(),
-                //            ->default(function () {
-                //                return \App\Models\Invoice::max('invoice_number') + 1;
-                //            }),
+                            ->required()
+                            ->default(function () {
+                                return \App\Models\Invoice::max('invoice_number') + 1;
+                            }),
                         Forms\Components\DatePicker::make('issue_date')
                             ->default(now())
                             ->label('Issue Date')
