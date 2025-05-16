@@ -144,8 +144,7 @@ class ContractResource extends Resource
                             ])
                             ->required(),
                         Forms\Components\DatePicker::make('due_date')
-                            ->label('Due Date')
-                            ->placeholder('Enter due date if applicable')
+                            ->required()
                             ->visible(fn (callable $get) => $get('payment_frequency') !== 'daily'),
                          ////////////////////////   
                         Forms\Components\Select::make('status')
