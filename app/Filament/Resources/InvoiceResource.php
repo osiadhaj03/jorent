@@ -109,9 +109,11 @@ class InvoiceResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
-                                'paid' => 'Paid',
-                                'unpaid' => 'Unpaid',
-                                'overdue' => 'Overdue',
+                      'paid' => 'Paid',
+                        'unpaid' => 'Unpaid',
+                        'pending' => 'Pending',
+                        'canceled' => 'Canceled',
+                        'on_hold' => 'On Hold',
                             ])
                             ->required(),
                         Forms\Components\DatePicker::make('due_date')
@@ -206,10 +208,14 @@ class InvoiceResource extends Resource
                     ->enum([
                         'paid' => 'Paid',
                         'unpaid' => 'Unpaid',
-                        'overdue' => 'Overdue',
+                        'pending' => 'Pending',
+                        'canceled' => 'Canceled',
+                        'on_hold' => 'On Hold',
+
+                
                     ])
                     ->sortable(),
-             
+            //paid', 'pending', 'unpaid', 'canceled', 'on_hold'
             ])
             ->filters([
                 //

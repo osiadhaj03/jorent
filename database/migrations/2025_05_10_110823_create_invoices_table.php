@@ -22,7 +22,7 @@ return new class extends Migration
             // تاريخ الاستحقاق يؤخذ من العقد عند إنشاء الفاتورة
             $table->date('due_date');
 
-            $table->enum('status', ['مدفوع', 'قيد الدفع', 'غير مدفوع', 'ملغية', 'معلقة'])->default('قيد الدفع');
+            $table->enum('status', ['paid', 'pending', 'unpaid', 'canceled', 'on_hold'])->default('pending');
             
             // خيار إذا كانت الفاتورة مولدة تلقائياً أو يدوياً
             $table->enum('generation_type', ['تلقائي', 'يدوي'])->default('تلقائي');
