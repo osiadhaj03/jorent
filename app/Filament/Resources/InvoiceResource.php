@@ -109,7 +109,7 @@ class InvoiceResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
-                      'paid' => 'Paid',
+                        'paid' => 'Paid',
                         'unpaid' => 'Unpaid',
                         'pending' => 'Pending',
                         'canceled' => 'Canceled',
@@ -205,15 +205,14 @@ class InvoiceResource extends Resource
            
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
-                    ->enum([
+                    ->formatStateUsing(fn ($state) => match ($state) {
                         'paid' => 'Paid',
                         'unpaid' => 'Unpaid',
                         'pending' => 'Pending',
                         'canceled' => 'Canceled',
                         'on_hold' => 'On Hold',
-
-                
-                    ])
+                        default => $state,
+                    })
                     ->sortable(),
             //paid', 'pending', 'unpaid', 'canceled', 'on_hold'
             ])
