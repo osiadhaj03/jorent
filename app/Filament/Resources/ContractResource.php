@@ -187,8 +187,7 @@ class ContractResource extends Resource
                                             ->required(),
                                     ])
                                     ->visible(fn (callable $get) => $get('payment_frequency') === 'yearly')
-                                     ->helperText(null)
-
+                                   
                                     ->columns(2),
                                             ]),
                          ////////////////////////   
