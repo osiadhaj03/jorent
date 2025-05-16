@@ -164,6 +164,20 @@ class ContractResource extends Resource
                             }),
                     ]),
 
+                Forms\Components\Section::make('الشروط والأحكام')
+                    ->description('Please enter the terms and conditions of the contract')
+                    ->schema([
+                        Forms\Components\Textarea::make('terms_and_conditions_extra')
+                            ->nullable(),
+                        Forms\Components\Actions::make([
+                            Forms\Components\Actions\Action::make('show_terms')
+                                ->label('عرض الشروط والأحكام')
+                                ->action(fn () => null)
+                                ->modalHeading('الشروط والأحكام')
+                                ->modalContent(view('filament.custom-terms-modal')),
+                        ]),
+                    ]),
+
                 // Signatures Section
                 Forms\Components\Section::make('Contract Signatures')
                     ->description('Click on each signature field to open the signature pad')
@@ -244,7 +258,8 @@ class ContractResource extends Resource
     {
         return $table
             ->columns([
-                
+
+
 
             ])
             ->filters([
