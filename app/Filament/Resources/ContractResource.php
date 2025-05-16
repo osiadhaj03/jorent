@@ -147,6 +147,15 @@ class ContractResource extends Resource
 
                         Forms\Components\DatePicker::make('due_date')
                             ->required()
+                            ->afterStateUpdated(function (callable $set, callable $get, $state) {
+                                $startDate = $get('start_date');
+                                $endDate = $get('end_date');
+                                if ($startDate && $endDate && $state) {
+                                    if ($state < $startDate || $state > $endDate) {
+                                        $set('due_date', null);
+                                    }
+                                }
+                            })
                             ->visible(function (callable $get) {
                                 $startDate = $get('start_date');
                                 $endDate = $get('end_date');
@@ -155,10 +164,20 @@ class ContractResource extends Resource
                                     return $dueDate >= $startDate && $dueDate <= $endDate;
                                 }
                                 return true;
+                            })
+                            ->helperText('يجب أن يكون تاريخ الاستحقاق بين تاريخ البداية وتاريخ النهاية')
+                            ->rule(function (callable $get) {
+                                $startDate = $get('start_date');
+                                $endDate = $get('end_date');
+                                return function ($attribute, $value, $fail) use ($startDate, $endDate) {
+                                    if ($startDate && $endDate && $value) {
+                                        if ($value < $startDate || $value > $endDate) {
+                                            $fail('تاريخ الاستحقاق يجب أن يكون بين تاريخ البداية وتاريخ النهاية.');
+                                        }
+                                    }
+                                };
                             }),
-
-
-                         ////////////////////////   
+                        ////////////////////////   
                         Forms\Components\Select::make('status')
                             ->options([
                                 'active' => 'Active',
