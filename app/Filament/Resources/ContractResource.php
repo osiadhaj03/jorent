@@ -187,8 +187,9 @@ class ContractResource extends Resource
                                             ->required(),
                                     ])
                                     ->visible(fn (callable $get) => $get('payment_frequency') === 'yearly')
-                                    ->columns(2)
-                                    ->helperText(null),
+                                     ->helperText(null)
+
+                                    ->columns(2),
                                             ]),
                          ////////////////////////   
                         Forms\Components\Select::make('status')
