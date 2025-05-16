@@ -34,8 +34,8 @@ class InvoiceResource extends Resource
                 Forms\Components\Section::make('Contract Details')
                     ->schema([
                          Forms\Components\Select::make('contract_id')
-                            ->relationship('contract', 'contract_number')
-                            ->label('Contract Number')
+                            ->relationship('contract', 'id')
+                            ->label('Contract')
                             ->required()
                             ->reactive()
                             ->afterStateUpdated(function ($state, $set) {
