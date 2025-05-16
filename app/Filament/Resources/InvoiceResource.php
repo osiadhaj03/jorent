@@ -55,7 +55,7 @@ class InvoiceResource extends Resource
 
                             }),
                         Forms\Components\Select::make('tenant_id')
-                            ->relationship('tenant', 'name')
+                            ->relationship('tenant', 'firstname')
                             ->label('Tenant Name')
                             ->required()
                             ->disabled()
