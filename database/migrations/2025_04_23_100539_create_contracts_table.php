@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
+            $table->data('due_date')->nullable(); // Optional: Date when the rent is due
             $table->decimal('rent_amount', 10, 2);
             $table->string('payment_frequency'); // e.g., monthly, quarterly
             $table->string('status')->default('pending'); // e.g., active, expired, terminated, pending

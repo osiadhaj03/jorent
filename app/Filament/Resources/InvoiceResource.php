@@ -29,136 +29,196 @@ class InvoiceResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            
             ->schema([
-                Forms\Components\Select::make('contract_id')
-                    ->relationship('contract', 'id') // Assuming 'id' or a descriptive field on Contract
-                    ->required()
-                    ->label('Contract')
-                    ->searchable()
-                    ->preload()
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        // Optionally, auto-fill tenant based on contract
-                        // $contract = \App\Models\Contract::find($state);
-                        // if ($contract) {
-                        //    $set('tenant_id', $contract->tenant_id);
-                        // }
-                    }),
-                Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'firstname') // Assuming 'firstname' on Tenant
-                    ->required()
-                    ->label('Tenant')
-                    ->searchable()
-                    ->preload(),
-                    // ->disabled(fn (callable $get) => !$get('contract_id')), // Disable if tenant is auto-filled
-                Forms\Components\TextInput::make('invoice_number')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Invoice Number')
-                    ->default(fn () => 'INV-' . strtoupper(uniqid())),
-                Forms\Components\DatePicker::make('issue_date')
-                    ->required()
-                    ->label('Issue Date')
-                    ->default(now()),
-                Forms\Components\DatePicker::make('due_date')
-                    ->required()
-                    ->label('Due Date')
-                    ->after('issue_date'),
-                Forms\Components\TextInput::make('amount')
-                    ->required()
-                    ->numeric()
-                    ->prefix('JOD') // Or your currency
-                    ->label('Amount'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'paid' => 'Paid',
-                        'overdue' => 'Overdue',
-                        'cancelled' => 'Cancelled',
-                    ])
-                    ->required()
-                    ->default('pending')
-                    ->label('Status'),
-                Forms\Components\DatePicker::make('payment_date')
-                    ->label('Payment Date')
-                    ->nullable(),
-                Forms\Components\Textarea::make('notes')
-                    ->label('Notes')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Contract Details')
+                    ->schema([
+                         Forms\Components\Select::make('contract_id')
+                            ->relationship('contract', 'contract_number')
+                            ->label('Contract Number')
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set) {
+                                if ($state) {
+                                    $contract = \App\Models\Contract::find($state);
+                                    if ($contract) {
+                                        $set('amount', $contract->amount);
+                                        $set('tenant_id', $contract->tenant_id);
+                                        $set('due_date', $contract->due_date);
+                                    }
+                                } else {
+                                    $set('amount', null);
+                                    $set('tenant_id', null);
+                                    $set('due_date', null);
+                                }
+                            
+
+                            }),
+                        Forms\Components\Select::make('tenant_id')
+                            ->relationship('tenant', 'name')
+                            ->label('Tenant Name')
+                            ->required()
+                            ->disabled()
+                            ->reactive()
+                            ->afterStateHydrated(function ($component, $state, $set, $get) {
+                                // If editing, keep the current tenant_id
+                                if ($state) {
+                                    return;
+                                }
+                                $contractId = $get('contract_id');
+                                if ($contractId) {
+                                    $contract = \App\Models\Contract::find($contractId);
+                                    if ($contract && $contract->tenant_id) {
+                                        $set('tenant_id', $contract->tenant_id);
+                                    }
+                                }
+                            })
+                    ]),
+                Forms\Components\Section::make('Invoice Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('invoice_number')
+                            ->label('Invoice Number')
+                            ->required(),
+                                ->default(function () {
+                                   return \App\Models\Invoice::max('invoice_number') + 1;
+                            }),
+                        Forms\Components\DatePicker::make('issue_date')
+                            ->default(now())
+                            ->label('Issue Date')
+                            ->required(),
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Amount')
+                            ->numeric()
+                            ->required()
+                            ->reactive()
+                            ->afterStateHydrated(function ($component, $state, $set, $get) {
+                                // If editing, keep the current amount
+                                if ($state) {
+                                    return;
+                                }
+                                $contractId = $get('contract_id');
+                                if ($contractId) {
+                                    $contract = \App\Models\Contract::find($contractId);
+                                    if ($contract) {
+                                        $set('amount', $contract->amount);
+                                    }
+                                }
+                            })
+                            ->disabled(fn ($get) => $get('contract_id') ? true : false),
+                       
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'paid' => 'Paid',
+                                'unpaid' => 'Unpaid',
+                                'overdue' => 'Overdue',
+                            ])
+                            ->required(),
+                        Forms\Components\DatePicker::make('due_date')
+                            ->label('Due Date')
+                            ->required()
+                            ->reactive()
+                            ->afterStateHydrated(function ($component, $state, $set, $get) {
+                                // If editing, keep the current due_date
+                                if ($state) {
+                                    return;
+                                }
+                                $contractId = $get('contract_id');
+                                if ($contractId) {
+                                    $contract = \App\Models\Contract::find($contractId);
+                                    if ($contract && $contract->due_date) {
+                                        $set('due_date', $contract->due_date);
+                                    }
+                                }
+                            })
+                            ->disabled(fn ($get) => $get('contract_id') ? true : false)
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                // Update due_date if contract_id changes
+                                $contractId = $get('contract_id');
+                                if ($contractId) {
+                                    $contract = \App\Models\Contract::find($contractId);
+                                    if ($contract && $contract->due_date) {
+                                        $set('due_date', $contract->due_date);
+                                    }
+                                } else {
+                                    $set('due_date', null);
+                                }
+                            }),
+                    ]),
+                
+                Forms\Components\Section::make('Additional Information')
+                    ->schema([
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Notes')
+                            ->placeholder('Any additional notes or comments'),
+                        Forms\Components\Select::make('generation_type')
+                            ->label('Generation Type')
+                            ->options([
+                                'automatic' => 'Automatic',
+                                'manual' => 'Manual',
+                            ])
+                            ->required(),
+                    ]),
+
+
             ]);
+   
+
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+
                 Tables\Columns\TextColumn::make('invoice_number')
-                    ->searchable()
+                    ->label('Invoice Number')
                     ->sortable()
-                    ->label('Invoice #'),
-                Tables\Columns\TextColumn::make('contract.id') // Or a more descriptive field from Contract
-                    ->label('Contract ID')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tenant.firstname')
-                    ->label('Tenant')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('contract.contract_number')
+                    ->label('Contract Number')
+                    ->sortable()
+                    ->searchable(),
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('Tenant Name')
+                    ->sortable()
+                    ->searchable(),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->money('JOD') // Or your currency
+                    ->label('Amount')
                     ->sortable()
-                    ->label('Amount'),
+                    ->searchable(),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('issue_date')
+                    ->label('Issue Date')
                     ->date()
-                    ->sortable()
-                    ->label('Issue Date'),
+                    ->sortable(),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('due_date')
+                    ->label('Due Date')
                     ->date()
-                    ->sortable()
-                    ->label('Due Date'),
+                    ->sortable(),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'paid' => 'success',
-                        'pending' => 'warning',
-                        'overdue' => 'danger',
-                        'cancelled' => 'gray',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('payment_date')
-                    ->date()
-                    ->sortable()
-                    ->label('Payment Date')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Status')
+                    ->enum([
+                        'paid' => 'Paid',
+                        'unpaid' => 'Unpaid',
+                        'overdue' => 'Overdue',
+                    ])
+                    ->sortable(),
+                    ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->relationship('tenant', 'firstname')
-                    ->label('Tenant'),
-                Tables\Filters\SelectFilter::make('contract_id')
-                    ->relationship('contract', 'id') // Or a more descriptive field
-                    ->label('Contract'),
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'paid' => 'Paid',
-                        'overdue' => 'Overdue',
-                        'cancelled' => 'Cancelled',
-                    ])
-                    ->label('Status'),
+                //
+                
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(), 
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -17,14 +17,11 @@ class Invoice extends Model
         'invoice_number',
         'issue_date',
         'due_date',
-        'amount',
         'status',
-        'payment_date',
+        'generation_type',
         'notes',
-        // Add 'description' if you have custom invoices that might not be linked to a contract
-        // and need a separate description field in the Invoice model itself.
-        // If 'description' is only for CustomInvoice model, then it's not needed here.
-        // 'description', 
+        'amount', // Assuming you have an amount field for the invoice
+        'payment_date', // Assuming you have a payment date field
     ];
 
     protected $casts = [

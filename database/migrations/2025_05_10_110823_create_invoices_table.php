@@ -15,14 +15,21 @@ return new class extends Migration
             $table->id();
             $table->foreignId('contract_id')->constrained()->onDelete('cascade');
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->string('invoice_number')->unique();
-            $table->date('issue_date');
+            
+            $table->bigInteger('invoice_number')->unique();
+            $table->date('issue_date'); // تاريخ الإصدار
+           
+            // تاريخ الاستحقاق يؤخذ من العقد عند إنشاء الفاتورة
             $table->date('due_date');
-            $table->decimal('amount', 10, 2);
-            $table->string('status')->default('pending'); // e.g., pending, paid, overdue, cancelled
-            $table->date('payment_date')->nullable();
+
+            $table->enum('status', ['مدفوع', 'قيد الدفع', 'غير مدفوع', 'ملغية', 'معلقة'])->default('قيد الدفع');
+            
+            // خيار إذا كانت الفاتورة مولدة تلقائياً أو يدوياً
+            $table->enum('generation_type', ['تلقائي', 'يدوي'])->default('تلقائي');
+
             $table->text('notes')->nullable();
             $table->timestamps();
+            
         });
     }
 
