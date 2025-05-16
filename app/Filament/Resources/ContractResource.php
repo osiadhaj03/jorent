@@ -33,132 +33,136 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
+                // قسم بيانات المالك
+                Forms\Components\Section::make('بيانات المالك')
+                    ->schema([
+                        Forms\Components\TextInput::make('landlord_name')
+                            ->required()
+                            ->label('Landlord Name'),
+                    ]),
 
+                // قسم بيانات المستأجر
+                Forms\Components\Section::make('بيانات المستأجر')
+                    ->schema([
+                        Forms\Components\Select::make('tenant_id')
+                            ->relationship('tenant', 'firstname')
+                            ->required()
+                            ->label('Tenant Name'),
+                    ]),
 
-                Forms\Components\TextInput::make('landlord_name')
-                    ->required()
-                    ->label('Landlord Name'),
+                // قسم بيانات الوحدة والعقار
+                Forms\Components\Section::make('بيانات الوحدة والعقار')
+                    ->schema([
+                        Forms\Components\Select::make('property_id')
+                            ->options(Property::all()->pluck('name', 'id'))
+                            ->required()
+                            ->label('Property Name')
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, callable $get) {
+                                $propertyId = $get('property_id');
+                                Log::info('Property ID selected: ' . $propertyId);
+                                if ($propertyId) {
+                                    $property = Property::with('address')->find($propertyId);
+                                    Log::info('Property found: ' . ($property ? 'yes' : 'no'));
+                                    Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
+                                    if ($property && $property->address) {
+                                        Log::info('Address details: ' . json_encode($property->address->toArray()));
+                                        $set('governorate', $property->address->governorate);
+                                        $set('city', $property->address->city);
+                                        $set('district', $property->address->district);
+                                        $set('building_number', $property->address->building_number);
+                                        $set('plot_number', $property->address->plot_number);
+                                        $set('basin_number', $property->address->basin_number);
+                                        $set('property_number', $property->address->property_number);
+                                        $set('street_name', $property->address->street_name);
+                                        Log::info('Fields have been set');
+                                    } else {
+                                        Log::info('Property or address not found, setting fields to null');
+                                        $set('governorate', null);
+                                        $set('city', null);
+                                        $set('district', null);
+                                        $set('building_number', null);
+                                        $set('plot_number', null);
+                                        $set('basin_number', null);
+                                        $set('property_number', null);
+                                        $set('street_name', null);
+                                    }
+                                }
+                                $set('unit_id', null);
+                            }),
+                        Forms\Components\Select::make('unit_id')
+                            ->options(function (callable $get) {
+                                $propertyId = $get('property_id');
+                                return $propertyId ? Unit::where('property_id', $propertyId)->pluck('name', 'id') : [];
+                            })
+                            ->required()
+                            ->label('Unit Name'),
+                        Forms\Components\TextInput::make('governorate')
+                            ->readOnly()
+                            ->label('Governorate (المحافظة)'),
+                        Forms\Components\TextInput::make('city')
+                            ->readOnly()
+                            ->label('City'),
+                        Forms\Components\TextInput::make('district')
+                            ->readOnly()
+                            ->label('District(الحي)'),
+                        Forms\Components\TextInput::make('building_number')
+                            ->readOnly()
+                            ->label('Building Number'),
+                        Forms\Components\TextInput::make('plot_number')
+                            ->readOnly()
+                            ->label('Plot Number(رقم القطعة)'),
+                        Forms\Components\TextInput::make('basin_number')
+                            ->readOnly()
+                            ->label('Basin Number(رقم الحوض)'),
+                        Forms\Components\TextInput::make('property_number')
+                            ->readOnly()
+                            ->label('Property Number(رقم المبنى العقاري)'),
+                        Forms\Components\TextInput::make('street_name')
+                            ->readOnly()
+                            ->label('Street Name'),
+                    ]),
 
-
-                Forms\Components\Select::make('tenant_id')
-                    ->relationship('tenant', 'firstname')
-                    ->required()
-                    ->label('Tenant Name'),
-
-                Forms\Components\Select::make('property_id')
-                    ->options(Property::all()->pluck('name', 'id'))
-                    ->required()
-                    ->label('Property Name')
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, callable $get) {
-                        $propertyId = $get('property_id');
-                        Log::info('Property ID selected: ' . $propertyId);
-                        
-                        if ($propertyId) {
-                            $property = Property::with('address')->find($propertyId);
-                            Log::info('Property found: ' . ($property ? 'yes' : 'no'));
-                            Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
-                            
-                            if ($property && $property->address) {
-                                Log::info('Address details: ' . json_encode($property->address->toArray()));
-                                $set('governorate', $property->address->governorate);
-                                $set('city', $property->address->city);
-                                $set('district', $property->address->district);
-                                $set('building_number', $property->address->building_number);
-                                $set('plot_number', $property->address->plot_number);
-                                $set('basin_number', $property->address->basin_number);
-                                $set('property_number', $property->address->property_number);
-                                $set('street_name', $property->address->street_name);
-                                Log::info('Fields have been set');
-                            } else {
-                                Log::info('Property or address not found, setting fields to null');
-                                $set('governorate', null);
-                                $set('city', null);
-                                $set('district', null);
-                                $set('building_number', null);
-                                $set('plot_number', null);
-                                $set('basin_number', null);
-                                $set('property_number', null);
-                                $set('street_name', null);
-                            }
-                        }
-                        $set('unit_id', null);
-                    }),
-                Forms\Components\Select::make('unit_id')
-                    ->options(function (callable $get) {
-                        $propertyId = $get('property_id');
-                        return $propertyId ? Unit::where('property_id', $propertyId)->pluck('name', 'id') : [];
-                    })
-                    ->required()
-                    ->label('Unit Name'),
-
-                ///////////    
-                Forms\Components\TextInput::make('governorate')
-                    ->readOnly()
-                    ->label('Governorate (المحافظة)'),
-                Forms\Components\TextInput::make('city')
-                    ->readOnly()
-                    ->label('City'),
-                Forms\Components\TextInput::make('district')
-                    ->readOnly()
-                    ->label('District(الحي)'),
-                Forms\Components\TextInput::make('building_number')
-                    ->readOnly()
-                    ->label('Building Number'),
-                Forms\Components\TextInput::make('plot_number')
-                    ->readOnly()
-                    ->label('Plot Number(رقم القطعة)'),
-                Forms\Components\TextInput::make('basin_number')
-                    ->readOnly()
-                    ->label('Basin Number(رقم الحوض)'),
-                Forms\Components\TextInput::make('property_number')
-                    ->readOnly()
-                    ->label('Property Number(رقم المبنى العقاري)'),
-                Forms\Components\TextInput::make('street_name')
-                    ->readOnly()
-                    ->label('Street Name'),
-
-
-/////////////////////////////////////////////////////////
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->required(),
-                Forms\Components\TextInput::make('rent_amount')
-                    ->numeric()
-                    ->required(),
-                Forms\Components\Select::make('payment_frequency')
-                    ->options([
-                        'daily' => 'Daily',
-                        'weekly' => 'Weekly',
-                        'monthly' => 'Monthly',
-                        'yearly' => 'Yearly',
-                    ])
-                    ->required(),
-                Forms\Components\Textarea::make('terms_and_conditions_extra')
-                    ->nullable(),
-
-                // Contract Status
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
-                    ])
-                    ->default('active')
-                    ->reactive()
-                    ->afterStateHydrated(function (callable $set, callable $get) {
-                        $startDate = $get('start_date');
-                        $endDate = $get('end_date');
-                        $currentDate = now();
-
-                        if ($startDate && $endDate) {
-                            if ($currentDate->between($startDate, $endDate)) {
-                                $set('status', 'active');
-                            } else {
-                                $set('status', 'inactive');
-                            }
-                        }
-                    }),
+                // قسم تفاصيل العقد
+                Forms\Components\Section::make('تفاصيل العقد')
+                    ->schema([
+                        Forms\Components\DatePicker::make('start_date')
+                            ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->required(),
+                        Forms\Components\TextInput::make('rent_amount')
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\Select::make('payment_frequency')
+                            ->options([
+                                'daily' => 'Daily',
+                                'weekly' => 'Weekly',
+                                'monthly' => 'Monthly',
+                                'yearly' => 'Yearly',
+                            ])
+                            ->required(),
+                        Forms\Components\Textarea::make('terms_and_conditions_extra')
+                            ->nullable(),
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'active' => 'Active',
+                                'inactive' => 'Inactive',
+                            ])
+                            ->default('active')
+                            ->reactive()
+                            ->afterStateHydrated(function (callable $set, callable $get) {
+                                $startDate = $get('start_date');
+                                $endDate = $get('end_date');
+                                $currentDate = now();
+                                if ($startDate && $endDate) {
+                                    if ($currentDate->between($startDate, $endDate)) {
+                                        $set('status', 'active');
+                                    } else {
+                                        $set('status', 'inactive');
+                                    }
+                                }
+                            }),
+                    ]),
 
                 // Signatures Section
                 Forms\Components\Section::make('Contract Signatures')
@@ -219,27 +223,28 @@ class ContractResource extends Resource
                             ->undoable(true)
                             ->confirmable(true)
                             ->required(),
-                    ])->columns(3),
+                    ])->columns(4),
 
-                Forms\Components\DatePicker::make('hired_date')
-                    ->default(now())
-                    ->readOnly()
-                    ->label('Hired Date'),
-                Forms\Components\TextInput::make('hired_by')
-                    ->default(Auth::user()->name)
-                    ->readOnly()
-                    ->label('Hired By'),
-
-            
-            
-                    ]);
-                
+                // قسم معلومات إضافية
+                Forms\Components\Section::make('معلومات إضافية')
+                    ->schema([
+                        Forms\Components\DatePicker::make('hired_date')
+                            ->default(now())
+                            ->readOnly()
+                            ->label('Hired Date'),
+                        Forms\Components\TextInput::make('hired_by')
+                            ->default(Auth::user()->name)
+                            ->readOnly()
+                            ->label('Hired By'),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                
 
             ])
             ->filters([
