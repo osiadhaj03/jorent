@@ -175,32 +175,32 @@ class InvoiceResource extends Resource
                     ->label('Invoice Number')
                     ->sortable()
                     ->searchable(),
-                    ->toggleable(),
+                    
                 Tables\Columns\TextColumn::make('contract.contract_number')
                     ->label('Contract Number')
                     ->sortable()
                     ->searchable(),
-                    ->toggleable(),
+            
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('Tenant Name')
                     ->sortable()
                     ->searchable(),
-                    ->toggleable(),
+                   
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
                     ->sortable()
                     ->searchable(),
-                    ->toggleable(),
+               
                 Tables\Columns\TextColumn::make('issue_date')
                     ->label('Issue Date')
                     ->date()
                     ->sortable(),
-                    ->toggleable(),
+         
                 Tables\Columns\TextColumn::make('due_date')
                     ->label('Due Date')
                     ->date()
                     ->sortable(),
-                    ->toggleable(),
+           
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->enum([
@@ -209,7 +209,7 @@ class InvoiceResource extends Resource
                         'overdue' => 'Overdue',
                     ])
                     ->sortable(),
-                    ->toggleable(),
+             
             ])
             ->filters([
                 //
