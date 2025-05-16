@@ -143,53 +143,10 @@ class ContractResource extends Resource
                                 'yearly' => 'Yearly',
                             ])
                             ->required(),
-                        // Due Date field: changes type based on payment_frequency
-                        Forms\Components\Fieldset::make('Due Date')
-                            ->schema([
-                                Forms\Components\DatePicker::make('due_date')
-                                    ->label('Due Date')
-                                    ->required()
-                                    ->visible(fn (callable $get) => in_array($get('payment_frequency'), ['daily']))
-                                    ->helperText('Select the due date for daily payments.'),
-                                Forms\Components\Select::make('due_day_of_week')
-                                    ->label('Day of the Week')
-                                    ->options([
-                                        'sunday' => 'Sunday',
-                                        'monday' => 'Monday',
-                                        'tuesday' => 'Tuesday',
-                                        'wednesday' => 'Wednesday',
-                                        'thursday' => 'Thursday',
-                                        'friday' => 'Friday',
-                                        'saturday' => 'Saturday',
-                                    ])
-                                    ->required()
-                                    ->visible(fn (callable $get) => $get('payment_frequency') === 'weekly')
-                                    ->helperText('Select the day of the week for weekly payments.'),
-                                Forms\Components\Select::make('due_day_of_month')
-                                    ->label('Day of the Month')
-                                    ->options(array_combine(range(1, 31), range(1, 31)))
-                                    ->required()
-                                    ->visible(fn (callable $get) => $get('payment_frequency') === 'monthly')
-                                    ->helperText('Select the day of the month for monthly payments.'),
-                                Forms\Components\Group::make()
-                                    ->schema([
-                                        Forms\Components\Select::make('due_day_of_year')
-                                            ->label('Day')
-                                            ->options(array_combine(range(1, 31), range(1, 31)))
-                                            ->required(),
-                                        Forms\Components\Select::make('due_month_of_year')
-                                            ->label('Month')
-                                            ->options([
-                                                1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-                                                5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-                                                9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
-                                            ])
-                                            ->required(),
-                                    ])
-                                    ->visible(fn (callable $get) => $get('payment_frequency') === 'yearly')
-                                   
-                                    ->columns(2),
-                                            ]),
+                        Forms\Components\DatePicker::make('due_date')
+                            ->label('Due Date')
+                            ->placeholder('Enter due date if applicable')
+                            ->visible(fn (callable $get) => $get('payment_frequency') !== 'daily'),
                          ////////////////////////   
                         Forms\Components\Select::make('status')
                             ->options([
