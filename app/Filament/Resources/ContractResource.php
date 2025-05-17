@@ -17,7 +17,6 @@ use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 class ContractResource extends Resource
@@ -60,14 +59,9 @@ class ContractResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $propertyId = $get('property_id');
-                                Log::info('Property ID selected: ' . $propertyId);
-                                Log::info('Attempting to fetch Property with ID: ' . $propertyId);
                                 if ($propertyId) {
                                     $property = Property::with('address')->find($propertyId);
-                                    Log::info('Property fetch result: ', ['property' => $property]);
                                     if ($property && $property->address) {
-                                        Log::info('Property address details: ', $property->address->toArray());
-                                        Log::info('Address details: ' . json_encode($property->address->toArray()));
                                         $set('governorate', $property->address->governorate);
                                         $set('city', $property->address->city);
                                         $set('district', $property->address->district);
@@ -76,10 +70,7 @@ class ContractResource extends Resource
                                         $set('basin_number', $property->address->basin_number);
                                         $set('property_number', $property->address->property_number);
                                         $set('street_name', $property->address->street_name);
-                                        Log::info('Fields have been set');
                                     } else {
-                                        Log::warning('Property or address not found for ID: ' . $propertyId);
-                                        Log::info('Property or address not found, setting fields to null');
                                         $set('governorate', null);
                                         $set('city', null);
                                         $set('district', null);
@@ -89,8 +80,6 @@ class ContractResource extends Resource
                                         $set('property_number', null);
                                         $set('street_name', null);
                                     }
-                                } else {
-                                    Log::warning('No Property ID provided.');
                                 }
                                 $set('unit_id', null);
                             }),
@@ -134,21 +123,6 @@ class ContractResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('end_date')
                             ->required(),
-
-                        Forms\Components\TextInput::make('rent_amount')
-                            ->numeric()
-                            ->required(),
-
-                  //   لازم ننتقاش فيها 
-                 //    Forms\Components\Select::make('payment_frequency')
-                    //        ->options([
-                    //            'daily' => 'Daily',
-                    //            'weekly' => 'Weekly',
-                    //            'monthly' => 'Monthly',
-                    //            'yearly' => 'Yearly',
-                    //        ])
-                    //        ->required(),
-
                         Forms\Components\DatePicker::make('due_date')
                             ->required()
                             ->afterStateUpdated(function (callable $set, callable $get, $state) {
@@ -181,7 +155,12 @@ class ContractResource extends Resource
                                     }
                                 };
                             }),
-                        ////////////////////////   
+
+                        Forms\Components\TextInput::make('rent_amount')
+                            ->numeric()
+                            ->required(),
+
+               
                         Forms\Components\Select::make('status')
                             ->options([
                                 'active' => 'Active',
@@ -201,7 +180,7 @@ class ContractResource extends Resource
                                     }
                                 }
                             }),
-                    ]),
+                    ])->columns(3),
 
                 Forms\Components\Section::make('الشروط والأحكام')
                     ->description('Please enter the terms and conditions of the contract')
@@ -224,58 +203,38 @@ class ContractResource extends Resource
                     ->schema([
                         SignaturePad::make('tenant_signature')
                             ->label('Tenant Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->clearable()
+                            ->undoable()
+                            ->confirmable()
                             ->required(),
 
-                        SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
+                        SignaturePad::make('first_witness_signature')
+                            ->label('First Witness Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->clearable()
+                            ->undoable()
+                            ->confirmable()
                             ->required(),
                             
-                        SignaturePad::make('witness_signature')
-                            ->label('Witness Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')            // Pen color on export (defaults to penColor)
-                            ->clearable(true)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
+                        SignaturePad::make('second_witness_signature')
+                            ->label('Second Witness Signature')
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->clearable()
+                            ->undoable()
+                            ->confirmable()
                             ->required(),
                             
                         SignaturePad::make('landlord_signature')
                             ->label('Landlord Signature')
-                            ->backgroundColor('rgba(0,0,0,0)')  // Background color on light mode
-                            ->backgroundColorOnDark('#f0a')     // Background color on dark mode (defaults to backgroundColor)
-                            ->exportBackgroundColor('#f00')     // Background color on export (defaults to backgroundColor)
-                            ->penColor('#000')                  // Pen color on light mode
-                            ->penColorOnDark('#fff')            // Pen color on dark mode (defaults to penColor)
-                            ->exportPenColor('#0f0')
-                            ->clearable(true)                   // Pen color on export (defaults to penColor)
-                            ->downloadable(false)
-                            ->undoable(true)
-                            ->confirmable(true)
+                            ->backgroundColor('rgba(0,0,0,0)')
+                            ->penColor('#000')
+                            ->clearable()
+                            ->undoable()
+                            ->confirmable()
                             ->required(),
                     ])->columns(4),
 
