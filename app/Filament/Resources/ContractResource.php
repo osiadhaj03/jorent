@@ -246,7 +246,7 @@ class ContractResource extends Resource
                             ->readOnly()
                             ->label('Hired Date'),
                         Forms\Components\TextInput::make('hired_by')
-                            ->default(Auth::user()->name)
+                            ->default(Auth::check() ? Auth::user()->name : 'Guest')
                             ->readOnly()
                             ->label('Hired By'),
                     ]),
