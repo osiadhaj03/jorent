@@ -14,15 +14,22 @@ return new class extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            $table->string('landlord_name');
             $table->date('start_date');
             $table->date('end_date');
-            $table->data('due_date')->nullable(); // Optional: Date when the rent is due
+            $table->date('due_date')->nullable();
             $table->decimal('rent_amount', 10, 2);
-            $table->string('payment_frequency'); // e.g., monthly, quarterly
-            $table->string('status')->default('pending'); // e.g., active, expired, terminated, pending
-            $table->text('notes')->nullable();
-            $table->string('contract_document')->nullable(); // Path to the uploaded document
+            
+            $table->string('status')->default('active');
+            $table->text('terms_and_conditions_extra')->nullable();
+            $table->json('tenant_signature')->nullable();
+            $table->json('first_witness_signature')->nullable();
+            $table->json('second_witness_signature')->nullable();
+            $table->json('landlord_signature')->nullable();
+            $table->date('hired_date')->nullable();
+            $table->string('hired_by')->nullable();
             $table->timestamps();
         });
     }
