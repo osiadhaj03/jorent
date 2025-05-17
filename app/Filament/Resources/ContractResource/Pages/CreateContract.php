@@ -13,10 +13,35 @@ class CreateContract extends CreateRecord
 
     protected function beforeCreate(): void
     {
+        // التحقق من وجود المستخدم وصلاحياته
+        if (!auth()->check()) {
+            Log::error('Unauthorized access attempt');
+            abort(403, 'Unauthorized');
+        }
+
+        // التحقق من البيانات المطلوبة
+        if (!isset($this->data['tenant_id']) || !isset($this->data['unit_id'])) {
+            Log::error('Missing required fields', $this->data);
+            abort(422, 'Missing required fields');
+        }
+
+        // تسجيل محاولة الإنشاء
         Log::info('Attempting to create new contract', [
             'user' => auth()->user()->name ?? 'Unknown',
             'data' => $this->data
         ]);
+
+        // التحقق من أن الوحدة تنتمي للعقار
+        if (isset($this->data['unit_id']) && isset($this->data['property_id'])) {
+            $unit = \App\Models\Unit::find($this->data['unit_id']);
+            if (!$unit || $unit->property_id != $this->data['property_id']) {
+                Log::error('Unit does not belong to the specified property', [
+                    'unit_id' => $this->data['unit_id'],
+                    'property_id' => $this->data['property_id']
+                ]);
+                abort(422, 'Invalid unit or property');
+            }
+        }
     }
 
     protected function afterCreate(): void
