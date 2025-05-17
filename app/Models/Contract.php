@@ -38,6 +38,7 @@ class Contract extends Model
         
     ];
 
+
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
@@ -52,4 +53,9 @@ class Contract extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
 }

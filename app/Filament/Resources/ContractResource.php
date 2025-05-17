@@ -61,11 +61,12 @@ class ContractResource extends Resource
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $propertyId = $get('property_id');
                                 Log::info('Property ID selected: ' . $propertyId);
+                                Log::info('Attempting to fetch Property with ID: ' . $propertyId);
                                 if ($propertyId) {
                                     $property = Property::with('address')->find($propertyId);
-                                    Log::info('Property found: ' . ($property ? 'yes' : 'no'));
-                                    Log::info('Property has address: ' . ($property?->address ? 'yes' : 'no'));
+                                    Log::info('Property fetch result: ', ['property' => $property]);
                                     if ($property && $property->address) {
+                                        Log::info('Property address details: ', $property->address->toArray());
                                         Log::info('Address details: ' . json_encode($property->address->toArray()));
                                         $set('governorate', $property->address->governorate);
                                         $set('city', $property->address->city);
@@ -77,6 +78,7 @@ class ContractResource extends Resource
                                         $set('street_name', $property->address->street_name);
                                         Log::info('Fields have been set');
                                     } else {
+                                        Log::warning('Property or address not found for ID: ' . $propertyId);
                                         Log::info('Property or address not found, setting fields to null');
                                         $set('governorate', null);
                                         $set('city', null);
@@ -87,6 +89,8 @@ class ContractResource extends Resource
                                         $set('property_number', null);
                                         $set('street_name', null);
                                     }
+                                } else {
+                                    Log::warning('No Property ID provided.');
                                 }
                                 $set('unit_id', null);
                             }),
