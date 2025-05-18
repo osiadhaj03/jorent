@@ -16,8 +16,6 @@ class PropertyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
-    protected static ?string $navigationGroup = 'Real Estate';
-
     public static function form(Form $form): Form
     {
         return $form
@@ -103,53 +101,10 @@ class PropertyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->sortable()
-                    ->searchable()
-                    ->limit(50)
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->sortable()
-                    ->searchable()
-                    ->limit(50)
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('acc.firstname')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Account Manager')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('type1')
-                    ->sortable()
-                    ->searchable()
-                    ->limit(50)
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('type2')
-                    ->sortable()
-                    ->searchable()
-                    ->limit(50)
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('birth_date')
-                    ->sortable()
-                    ->searchable()
-                    ->date('Y-m-d')
-                    ->label('Birth Date')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->sortable()
-                    ->searchable()
-                    ->date('Y-m-d')
-                    ->label('Created At')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->sortable()
-                    ->searchable()
-                    ->date('Y-m-d')
-                    ->label('Updated At')
-                    ->toggleable(),
+                Tables\Columns\TextColumn::make('name')->label('Property Name')->searchable(),
+                Tables\Columns\TextColumn::make('type1')->label('Primary Type'),
+                Tables\Columns\TextColumn::make('type2')->label('Usage Type'),
+                Tables\Columns\TextColumn::make('full_address')->label('Full Address')->limit(50),
             ])
             ->filters([])
             ->actions([
@@ -160,14 +115,6 @@ class PropertyResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\AddressRelationManager::class,
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
