@@ -10,7 +10,7 @@ class Address extends Model
     use HasFactory;
     //
     protected $fillable = [
-        'addressable',
+        'property_id',
         'country',
         'governorate',
         'city',
@@ -54,8 +54,7 @@ class Address extends Model
     {
         return $this->belongsTo(Property::class);
     }
-    
-    
+
     public function getFullAddressAttribute()
     {
         return $this->country . ', ' . $this->governorate . ', ' . $this->city . ', ' . $this->district . ', ' . $this->building_number . ', ' . $this->plot_number . ', ' . $this->basin_number . ', ' . $this->property_number . ', ' . $this->street_name;

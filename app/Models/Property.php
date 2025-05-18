@@ -51,7 +51,7 @@ class Property extends Model
     // relationships with table addresses one to one //osaidhaj03
     public function address()
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class, 'property_id');
     }
 
     // relationship with table acc one to many //osaidhaj03

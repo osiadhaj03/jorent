@@ -21,7 +21,8 @@ class Contract extends Model
         'hired_by',
         'landlord_name',
         'tenant_signature',
-        'witness_signature',
+        'first_witness_signature',
+        'second_witness_signature',
         'landlord_signature',
         'property_id',
         'governorate',
@@ -35,8 +36,16 @@ class Contract extends Model
     ];
 
     protected $casts = [
-        
+        'tenant_signature' => 'json',
+        'first_witness_signature' => 'json',
+        'second_witness_signature' => 'json',
+        'landlord_signature' => 'json',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'due_date' => 'date',
+        'hired_date' => 'date'
     ];
+
 
     public function tenant()
     {
@@ -52,4 +61,9 @@ class Contract extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
 }

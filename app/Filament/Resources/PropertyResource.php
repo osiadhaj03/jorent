@@ -3,53 +3,34 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PropertyResource\Pages;
-use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\Property;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Facades\Filament;
 
 class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
+    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Real Estate';
-    protected static ?string $navigationLabel = 'Properties';
-    protected static ?string $label = 'Property';
-    protected static ?string $pluralLabel = 'Properties';
-    protected static ?string $slug = 'properties';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Basic Information')
+                // 🏠 قسم بيانات العقار
+                Forms\Components\Section::make('Property Information')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('description')
-                            ->required()
-                            ->maxLength(65535),
-                    ]),
-
-                Forms\Components\Section::make('Type Information')
-                    ->schema([
-                        Forms\Components\Select::make('type2')
-                            ->options([
-                                'residential' => 'Residential',
-                                'commercial' => 'Commercial',
-                                'industrial' => 'Industrial',
-                            ])
+                            ->label('Property Name') // ✔️ تعديل التسمية لتكون أوضح
                             ->required(),
+                        Forms\Components\Textarea::make('description')->label('Description'),
                         Forms\Components\Select::make('type1')
+                            ->label('Primary Type') // ✔️ label معبر أكثر
                             ->options([
                                 'building' => 'Building',
                                 'villa' => 'Villa',
@@ -57,109 +38,71 @@ class PropertyResource extends Resource
                                 'warehouse' => 'Warehouse',
                             ])
                             ->required(),
-                    ]),
-
-                Forms\Components\Section::make('Additional Details')
-                    ->schema([
-                        Forms\Components\Repeater::make('features')
-                            ->schema([
-                                Forms\Components\TextInput::make('feature_name')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('feature_value')
-                                    ->required()
-                                    ->maxLength(255),
+                        Forms\Components\Select::make('type2')
+                            ->label('Usage Type') // ✔️ label معبر أكثر
+                            ->options([
+                                'residential' => 'Residential',
+                                'commercial' => 'Commercial',
+                                'industrial' => 'Industrial',
                             ])
-                            ->columns(2)
-                            ->createItemButtonLabel('Add Feature'),
-                        Forms\Components\Repeater::make('images')
-                            ->label('Images')
-                            ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->label('Image')
-                                    ->image()
-                                    ->directory('uploads/properties')
-                                    ->maxSize(1024), // Optional size limit in KB
-                            ])
-                            ->columns(1)
-                            ->createItemButtonLabel('Add Image'),
+                            ->required(),
+                        Forms\Components\DatePicker::make('birth_date')->label('Construction Date'),
+                        Forms\Components\TextInput::make('floors_count')->label('Floors Count')->numeric(),
+                        Forms\Components\TextInput::make('floor_area')->label('Floor Area (m²)')->numeric(),
+                        Forms\Components\TextInput::make('total_area')->label('Total Area (m²)')->numeric(),
+                        Forms\Components\TextInput::make('acc_id')->label('Account ID'),
                     ]),
 
-                Forms\Components\Section::make('Property Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('floors_count')
-                            ->required()
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(100),
-                        Forms\Components\TextInput::make('floor_area')
-                            ->required()
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(10000),
-                        Forms\Components\TextInput::make('total_area')
-                            ->required()
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(10000),
-                    ]),
-
+                // 🗺️ قسم بيانات العنوان المرتبط
                 Forms\Components\Section::make('Address Information')
                     ->schema([
-                        Forms\Components\TextInput::make('address.country')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.country', $state)),
-                        Forms\Components\TextInput::make('address.governorate')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.governorate', $state)),
-                        Forms\Components\TextInput::make('address.city')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.city', $state)),
-                        Forms\Components\TextInput::make('address.district')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.district', $state)),
-                        Forms\Components\TextInput::make('address.building_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.building_number', $state)),
-                        Forms\Components\TextInput::make('address.plot_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.plot_number', $state)),
-                        Forms\Components\TextInput::make('address.basin_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.basin_number', $state)),
-                        Forms\Components\TextInput::make('address.property_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.property_number', $state)),
-                        Forms\Components\TextInput::make('address.street_name')
-                            ->required()
-                            ->maxLength(255)
-                            ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('address_data.street_name', $state)),
+                        Forms\Components\TextInput::make('address.country')->label('Country'),
+                        Forms\Components\TextInput::make('address.governorate')->label('Governorate'),
+                        Forms\Components\TextInput::make('address.city')->label('City'),
+                        Forms\Components\TextInput::make('address.district')->label('District'),
+                        Forms\Components\TextInput::make('address.building_number')->label('Building Number'),
+                        Forms\Components\TextInput::make('address.plot_number')->label('Plot Number'),
+                        Forms\Components\TextInput::make('address.basin_number')->label('Basin Number'),
+                        Forms\Components\TextInput::make('address.property_number')->label('Property Number'),
+                        Forms\Components\TextInput::make('address.street_name')->label('Street Name'),
                     ]),
             ]);
     }
 
-    public static function table(Table $table): Table
+    // 🛠️ عند إنشاء سجل جديد
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['address_data'] = $data['address'] ?? [];
+        unset($data['address']);
+        return $data;
+    }
+
+    // 🛠️ عند التعديل على السجل
+    public static function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['address_data'] = $data['address'] ?? [];
+        unset($data['address']);
+        return $data;
+    }
+
+    public static function afterCreate($record, array $data): void
+    {
+        if (!empty($data['address_data'])) {
+            $record->address()->create($data['address_data']);
+        }
+    }
+
+    public static function afterSave($record, array $data): void
+    {
+        if (!empty($data['address_data'])) {
+            $record->address()->updateOrCreate([], $data['address_data']);
+        }
+    }
+
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                //
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
                     ->searchable()
@@ -195,21 +138,6 @@ class PropertyResource extends Resource
                     ->date('Y-m-d')
                     ->label('Birth Date')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('floors_count')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Floors Count')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('floor_area')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Floor Area')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('total_area')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Total Area')
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
                     ->searchable()
@@ -223,21 +151,13 @@ class PropertyResource extends Resource
                     ->label('Updated At')
                     ->toggleable(),
             ])
-
-            ->filters([
-                //
-              
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ViewAction::make()
-
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -256,6 +176,4 @@ class PropertyResource extends Resource
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
     }
-
-
 }
