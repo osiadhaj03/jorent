@@ -159,17 +159,8 @@ class ContractResource extends Resource
                         Forms\Components\TextInput::make('rent_amount')
                             ->numeric()
                             ->required(),
-                        Forms\Components\Select::make('payment_frequency')
-                            ->options([
-                                'daily' => 'Daily',
-                                'weekly' => 'Weekly',
-                                'monthly' => 'Monthly',
-                                'yearly' => 'Yearly',
-                            ])
-                            ->required(),
-                        Forms\Components\Textarea::make('terms_and_conditions_extra')
-                            ->nullable(),
 
+               
                         Forms\Components\Select::make('status')
                             ->options([
                                 'active' => 'Active',
@@ -255,7 +246,7 @@ class ContractResource extends Resource
                             ->readOnly()
                             ->label('Hired Date'),
                         Forms\Components\TextInput::make('hired_by')
-                            ->default(Auth::check() ? Auth::user()->name : 'Guest')
+                            ->default(Auth::user()->name)
                             ->readOnly()
                             ->label('Hired By'),
                     ]),
@@ -306,9 +297,7 @@ class ContractResource extends Resource
                 Tables\Columns\TextColumn::make('rent_amount')
                     ->label('Rent Amount')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('payment_frequency')
-                    ->label('Payment Frequency')
-                    ->toggleable(),
+                
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->toggleable(),
