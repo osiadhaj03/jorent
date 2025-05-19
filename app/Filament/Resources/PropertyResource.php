@@ -16,6 +16,8 @@ class PropertyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
+    protected static ?string $navigationGroup = 'Real Estate';
+
     public static function form(Form $form): Form
     {
         return $form
